@@ -1,0 +1,34 @@
+<script setup lang="ts">
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useInitials } from '@/composables/useInitials';
+import type { User } from '@/types';
+import { computed } from 'vue';
+
+interface Props {
+    user: User;
+    showEmail?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    showEmail: false,
+});
+
+const { getInitials } = useInitials();
+
+// Compute whether we should show the avatar image
+const showAvatar = computed(() => props.user.nombres && props.user.nombres !== '');
+</script>
+
+<template>
+    <Avatar class="h-8 w-8 overflow-hidden rounded-lg">
+        <AvatarImage v-if="showAvatar" :src="user.nombres!" :alt="user.nombres" />
+        <AvatarFallback class="rounded-lg text-black dark:text-white">
+            {{ getInitials(user.nombres) }}
+        </AvatarFallback>
+    </Avatar>
+
+    <div class="grid flex-1 text-left text-sm leading-tight">
+        <span class="truncate font-medium">{{ user.nombres }}</span>
+        <span v-if="showEmail" class="truncate text-xs text-muted-foreground">{{ user.email }}</span>
+    </div>
+</template>

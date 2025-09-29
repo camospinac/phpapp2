@@ -1,0 +1,249 @@
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-sans: Instrument Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-sidebar: var(--sidebar-background);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+@layer utilities {
+    body,
+    html {
+        --font-sans:
+            'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    }
+}
+
+:root {
+  /* Base - Fondo claro y texto oscuro */
+  --background: hsl(30 30% 98%); /* Blanco cálido ligeramente anaranjado */
+  --foreground: hsl(210 15% 15%); /* Gris carbón profundo para texto */
+
+  /* Tarjetas y popovers */
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(210 15% 15%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(210 15% 15%);
+
+  /* Primario - Color principal (Rojo anaranjado) */
+  --primary: #F04526;
+  --primary-foreground: hsl(0 0% 100%); /* Texto blanco para contraste */
+
+  /* Secundarios - Tonos suaves derivados del primario */
+  --secondary: hsl(14 80% 96%); /* Fondo muy claro derivado del rojo */
+  --secondary-foreground: hsl(14 80% 30%); /* Texto más oscuro del mismo tono */
+  
+  /* Muted - Grises cálidos para separar secciones */
+  --muted: hsl(15 20% 94%);
+  --muted-foreground: hsl(15 10% 40%);
+  
+  /* Accent - Una versión suave del primario */
+  --accent: hsl(14 85% 90%);
+  --accent-foreground: hsl(14 80% 25%);
+
+  /* Destructivo - Un rojo profundo más serio */
+  --destructive: hsl(0 70% 45%);
+  --destructive-foreground: hsl(0 0% 100%);
+
+  /* Bordes, inputs y ring */
+  --border: hsl(14 15% 88%);
+  --input: hsl(14 15% 92%);
+  --ring: #F04526; /* Foco en el color principal */
+
+  /* Charts - Colores complementarios y derivados */
+  --chart-1: #F04526;  /* Principal */
+  --chart-2: hsl(14 80% 65%); /* Versión clara */
+  --chart-3: hsl(14 80% 80%); /* Aún más clara */
+  --chart-4: hsl(200 70% 40%); /* Complementario (azul petróleo) */
+  --chart-5: hsl(15 20% 92%); /* Neutral */
+
+  /* Bordes redondeados */
+  --radius: 0.5rem;
+
+  /* Sidebar - Integrado con la paleta */
+  --sidebar-background: hsl(0 0% 100%);
+  --sidebar-foreground: hsl(210 15% 20%);
+  --sidebar-primary: #F04526;
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(14 80% 96%);
+  --sidebar-accent-foreground: hsl(14 80% 30%);
+  --sidebar-border: hsl(14 15% 88%);
+  --sidebar-ring: #F04526;
+  --sidebar: hsl(0 0% 100%);
+}
+
+
+.dark {
+  /* Base - Fondo profundo y texto claro */
+  --background: hsl(0 0% 5%); /* Negro suave, no absoluto */
+  --foreground: hsl(0 0% 96%); /* Texto claro ligeramente cálido */
+
+  /* Tarjetas y popovers */
+  --card: hsl(0 0% 7%);
+  --card-foreground: hsl(0 0% 96%);
+  --popover: hsl(0 0% 7%);
+  --popover-foreground: hsl(0 0% 96%);
+
+  /* Primario - Color protagonista (Rojo anaranjado) */
+  --primary: #F04526;
+  --primary-foreground: hsl(0 0% 100%); /* Texto blanco sobre primario */
+
+  /* Secundarios - Tonos oscuros cálidos */
+  --secondary: hsl(14 35% 18%); /* Fondo oscuro con matiz cálido */
+  --secondary-foreground: hsl(14 80% 85%); /* Texto más claro en secundario */
+
+  /* Muted - Grises cálidos para textos secundarios */
+  --muted: hsl(15 15% 15%);
+  --muted-foreground: hsl(15 10% 60%);
+
+  /* Accent - Un rojo anaranjado más suave */
+  --accent: hsl(14 85% 25%);
+  --accent-foreground: hsl(0 0% 100%);
+
+  /* Destructivo - Un rojo más profundo y serio */
+  --destructive: hsl(0 70% 45%);
+  --destructive-foreground: hsl(0 0% 100%);
+
+  /* Bordes, inputs y ring */
+  --border: hsl(15 15% 18%);
+  --input: hsl(15 15% 20%);
+  --ring: #F04526;
+
+  /* Charts - Rojos y complementarios */
+  --chart-1: #F04526; /* Principal */
+  --chart-2: hsl(14 80% 60%); /* Rojo más claro */
+  --chart-3: hsl(14 70% 40%); /* Rojo más oscuro */
+  --chart-4: hsl(200 70% 50%); /* Azul petróleo para contraste */
+  --chart-5: hsl(15 30% 25%); /* Neutro oscuro para balance */
+
+  /* Sidebar - Integrado con la nueva paleta */
+  --sidebar-background: hsl(0 0% 7%);
+  --sidebar-foreground: hsl(0 0% 95%);
+  --sidebar-primary: #F04526;
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(14 35% 18%);
+  --sidebar-accent-foreground: hsl(14 80% 85%);
+  --sidebar-border: hsl(15 15% 20%);
+  --sidebar-ring: #F04526;
+  --sidebar: hsl(0 0% 7%);
+}
+
+
+.collapse {
+    visibility: visible !important;
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+
+.animate-spotlight {
+  position: relative; /* Necesario para posicionar el punto de luz */
+  overflow: hidden;   /* Oculta el punto de luz cuando está fuera del botón */
+}
+
+/* El punto de luz y su estela */
+.animate-spotlight::before {
+  content: '';
+  position: absolute;
+  width: 100px; /* Ancho del "cometa" */
+  height: 100%; /* Altura del botón */
+  /* Creamos un gradiente radial que es blanco en el centro (el punto) y se desvanece */
+  background: radial-gradient(circle at center, hsl(var(--primary)) 2%, transparent 25%);
+  animation: move-spotlight 4s linear infinite; /* Llama a la animación */
+}
+
+/* La animación que mueve el punto de luz alrededor del borde */
+@keyframes move-spotlight {
+  0% {
+    transform: translate(-100%, -100%) rotate(0deg);
+  }
+  25% {
+    transform: translate(0%, -100%) rotate(0deg);
+  }
+  50% {
+    transform: translate(0%, 0%) rotate(180deg);
+  }
+  75% {
+    transform: translate(-100%, 0%) rotate(180deg);
+  }
+  100% {
+    transform: translate(-100%, -100%) rotate(360deg);
+  }
+}
