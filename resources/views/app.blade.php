@@ -32,7 +32,8 @@
         </style>
 
         <title inertia>{{ config('app.name') }}</title>
-
+        
+        <link rel="apple-touch-icon" href="/img/icons/apple-touch-icon.png">
         
         <!-- Favicon -->
         <link href="/img/favicon.ico" rel="icon">

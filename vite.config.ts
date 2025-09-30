@@ -27,9 +27,9 @@ export default defineConfig({
                 globPatterns: ['**/*.{js,css,html,ico,png,svg}']
             },
             manifest: {
-                name: 'Finance PWA',
-                short_name: 'FinancePWA',
-                description: 'Tu aplicación personal de finanzas.',
+                name: 'Eon Grupo',
+                short_name: 'EON',
+                description: 'EON Grupo Empresarial.',
                 theme_color: '#000000',
                 background_color: '#ffffff',
                 display: 'standalone',
