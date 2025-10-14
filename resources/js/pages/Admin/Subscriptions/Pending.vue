@@ -1,8 +1,27 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue'; // O tu layout de Admin si tienes uno
+import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
+import { ref } from 'vue';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from '@/components/ui/dialog';
+
+
+// --- LÓGICA DEL MODAL ---
+const isReceiptModalOpen = ref(false);
+const selectedReceiptUrl = ref('');
+
+const openReceiptModal = (url: string) => {
+    selectedReceiptUrl.value = url;
+    isReceiptModalOpen.value = true;
+};
+
 
 // --- INTERFACES PARA TIPADO ---
 interface User {
@@ -64,16 +83,18 @@ const formatDate = (dateString: string) => {
 </script>
 
 <template>
+
     <Head title="Aprobar Suscripciones" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="p-4 md:p-6 rounded-xl border bg-card text-card-foreground">
             <h3 class="text-xl font-semibold mb-4">Suscripciones Pendientes de Verificación</h3>
-            
-            <div v-if="subscriptions.length === 0" class="flex items-center justify-center h-[40vh] text-muted-foreground">
+
+            <div v-if="subscriptions.length === 0"
+                class="flex items-center justify-center h-[40vh] text-muted-foreground">
                 <p class="text-center">¡Buen trabajo! No hay suscripciones pendientes por aprobar.</p>
             </div>
-            
+
             <div v-else class="overflow-x-auto">
                 <table class="min-w-full text-sm text-left">
                     <thead class="border-b">
@@ -81,7 +102,7 @@ const formatDate = (dateString: string) => {
                             <th scope="col" class="px-4 py-3 font-medium">Usuario</th>
                             <th class="px-4 py-3 font-medium"># Documento</th>
                             <th scope="col" class="px-4 py-3 font-medium">Plan</th>
-                            <th scope="col" class="px-4 py-3 font-medium">Tipo Contrato</th> 
+                            <th scope="col" class="px-4 py-3 font-medium">Tipo Contrato</th>
                             <th scope="col" class="px-4 py-3 font-medium text-right">Monto</th>
                             <th class="px-4 py-3 font-medium text-right">Ganancia Esperada</th>
                             <th scope="col" class="px-4 py-3 font-medium">Fecha Solicitud</th>
@@ -96,12 +117,15 @@ const formatDate = (dateString: string) => {
                             <td class="px-4 py-3 text-muted-foreground">{{ sub.plan.name }}</td>
                             <td class="px-4 py-3 font-semibold capitalize"> {{ sub.contract_type }}</td>
                             <td class="px-4 py-3 font-mono text-right">{{ formatCurrency(sub.initial_investment) }}</td>
-                            <td class="px-4 py-3 font-mono text-right text-green-600">+{{ formatCurrency(sub.profit_amount) }}</td>
+                            <td class="px-4 py-3 font-mono text-right text-green-600">+{{
+                                formatCurrency(sub.profit_amount) }}</td>
                             <td class="px-4 py-3 text-muted-foreground">{{ formatDate(sub.created_at) }}</td>
                             <td class="px-4 py-3 text-center">
-                                <a :href="`/storage/${sub.payment_receipt_path}`" target="_blank" class="text-primary underline hover:text-primary/80">
+                                <Button v-if="sub.payment_receipt_path" variant="outline" size="sm"
+                                    @click="openReceiptModal(`/storage/${sub.payment_receipt_path}`)">
                                     Ver Imagen
-                                </a>
+                                </Button>
+                                <span v-else class="text-xs text-muted-foreground">N/A</span>
                             </td>
                             <td class="px-4 py-3 text-center">
                                 <Button @click="approveSubscription(sub.id)" size="sm">
@@ -114,4 +138,10 @@ const formatDate = (dateString: string) => {
             </div>
         </div>
     </AppLayout>
+
+        <Dialog :open="isReceiptModalOpen" @update:open="isReceiptModalOpen = false">
+        <DialogContent class="p-2 sm:max-w-xl">
+            <img :src="selectedReceiptUrl" alt="Comprobante de Pago" class="w-full rounded-lg">
+        </DialogContent>
+    </Dialog>
 </template>

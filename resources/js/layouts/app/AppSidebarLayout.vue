@@ -5,6 +5,7 @@ import AppSidebar from '@/components/AppSidebar.vue';
 import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
 import InstallPwaButton from '@/components/InstallPwaButton.vue';
 import type { BreadcrumbItemType } from '@/types';
+import FloatingNav from '@/components/FloatingNav.vue';
 
 interface Props {
     breadcrumbs?: BreadcrumbItemType[];
@@ -24,5 +25,5 @@ withDefaults(defineProps<Props>(), {
         </AppContent>
         <InstallPwaButton />
     </AppShell>
-    
+    <FloatingNav />
 </template>
