@@ -25,6 +25,13 @@ interface Recipient {
     apellidos: string;
 }
 
+interface PaymentMethod {
+    id: number;
+    name: string;
+    account_details: string;
+    logo_path: string | null;
+}
+
 const isTransferModalOpen = ref(false);
 const transferStep = ref(1); // 1 = Buscar usuario, 2 = Ingresar monto
 const recipientUser = ref<Recipient | null>(null);
@@ -49,6 +56,12 @@ const formattedTransferAmount = computed({
         transferForm.amount = newValue.replace(/[^0-9]/g, '');
     }
 });
+
+const getLogoUrl = (path: string | null) => {
+    if (!path) return 'https://placehold.co/100x100/gray/white?text=Logo';
+    // Asumimos que están en public/storage/ como lo configuramos
+    return `/storage/${path}`;
+}
 
 // 4. Función COMPLETA para buscar al destinatario
 const findRecipient = () => {
@@ -180,6 +193,7 @@ const props = withDefaults(defineProps<{
     totalAvailable?: number;
     transactions?: Transaction[];
     withdrawals?: Withdrawal[];
+    paymentMethods?: PaymentMethod[];
 }>(), {
     subscriptions: () => [],
     plans: () => [],
@@ -189,6 +203,7 @@ const props = withDefaults(defineProps<{
     totalGanancia: 0,
     totalAvailable: 0,
     withdrawals: () => [],
+    paymentMethods: () => [],
 });
 
 const transferSubscriptions = computed(() =>
@@ -219,7 +234,8 @@ const generatedCode = ref<string | null>(null);
 
 const withdrawalForm = useForm({
     amount: '',
-    payment_method: 'NEQUI',
+    // Se asegura de que el valor inicial SÍ exista en la lista de props
+    payment_method: props.paymentMethods.length > 0 ? props.paymentMethods[0].name : '',
     destination_phone_number: '',
 });
 
@@ -262,12 +278,12 @@ const closeWithdrawalModal = () => {
     generatedCode.value = null;
 };
 
-const paymentMethods = [
-    { name: 'Nequi', value: 'NEQUI', logo: '/img/logos/nequi.jpg' },
-    { name: 'Daviplata', value: 'DAVIPLATA', logo: '/img/logos/daviplata.png' },
-    { name: 'Movi', value: 'MOVI', logo: '/img/logos/movi.jpg' },
-    { name: 'Zelle', value: 'ZELLE', logo: '/img/logos/zelle.png' },
-];
+// const paymentMethods = [
+//     { name: 'Nequi', value: 'NEQUI', logo: '/img/logos/nequi.jpg' },
+//     { name: 'Daviplata', value: 'DAVIPLATA', logo: '/img/logos/daviplata.png' },
+//     { name: 'Movi', value: 'MOVI', logo: '/img/logos/movi.jpg' },
+//     { name: 'Zelle', value: 'ZELLE', logo: '/img/logos/zelle.png' },
+// ];
 
 const handleNewSubscription = (formData: ReturnType<typeof useForm>) => {
     formData.post(route('subscriptions.store'), {
@@ -391,7 +407,7 @@ const copyToClipboard = () => {
                         <h3 class="text-lg font-medium text-muted-foreground">Ganancia Total</h3>
                         <p class="mt-1 text-4xl font-semibold tracking-tight text-blue-500">{{
                             formatCurrency(totalGanancia)
-                        }}</p>
+                            }}</p>
                     </div>
                 </div>
 
@@ -417,7 +433,7 @@ const copyToClipboard = () => {
                                 <div class="flex flex-col text-center">
                                     <span>{{ sub.plan.name }} #{{ sub.sequence_id }}</span>
                                     <span class="text-xs capitalize text-muted-foreground/80">({{ sub.contract_type
-                                    }})</span>
+                                        }})</span>
                                 </div>
                             </button>
                         </nav>
@@ -529,9 +545,9 @@ const copyToClipboard = () => {
                                             <td class="py-2 font-mono">#{{ sub.sequence_id }}</td>
                                             <td class="py-2">{{ sub.plan.name }}</td>
                                             <td class="py-2 font-mono">{{ formatCurrency(sub.initial_investment)
-                                            }}</td>
+                                                }}</td>
                                             <td class="py-2">{{ new Date(sub.created_at).toLocaleString('es-CO')
-                                            }}</td>
+                                                }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -826,7 +842,8 @@ const copyToClipboard = () => {
                                     <tr class="border-t">
                                         <td class="p-3 font-semibold">Ideal Para</td>
                                         <td class="p-3">Generar flujo de caja y tener flexibilidad.</td>
-                                        <td class="p-3 font-bold">Maximizar el crecimiento del capital a largo plazo.</td>
+                                        <td class="p-3 font-bold">Maximizar el crecimiento del capital a largo plazo.
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -845,7 +862,8 @@ const copyToClipboard = () => {
                         Selecciona un plan y define cómo quieres realizar el pago.
                     </DialogDescription>
                 </DialogHeader>
-                <PlanSelector :plans="plans" :total-available="totalAvailable" @submit="handleNewSubscription" />
+                <PlanSelector :plans="plans" :total-available="totalAvailable" :paymentMethods="paymentMethods"
+                    @submit="handleNewSubscription" />
             </DialogContent>
         </Dialog>
 
@@ -862,12 +880,13 @@ const copyToClipboard = () => {
                         <div class="grid gap-2">
                             <Label>Enviar a</Label>
                             <div class="grid grid-cols-2 gap-3">
-                                <label v-for="method in paymentMethods" :key="method.value"
+                                <label v-for="method in paymentMethods" :key="method.id"
                                     class="flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all"
-                                    :class="{ 'ring-2 ring-primary border-primary': withdrawalForm.payment_method === method.value }">
-                                    <input type="radio" v-model="withdrawalForm.payment_method" :value="method.value"
+                                    :class="{ 'ring-2 ring-primary border-primary': withdrawalForm.payment_method === method.name }">
+                                    <input type="radio" v-model="withdrawalForm.payment_method" :value="method.name"
                                         class="sr-only" />
-                                    <img :src="method.logo" :alt="method.name" class="h-16 w-full object-contain mb-2">
+                                    <img :src="getLogoUrl(method.logo_path)" :alt="method.name"
+                                        class="h-16 w-full object-contain mb-2">
                                     <span class="text-lg font-semibold">{{ method.name }}</span>
                                 </label>
                             </div>

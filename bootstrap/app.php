@@ -32,6 +32,9 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
     })
+    ->withBroadcasting(
+        __DIR__.'/../routes/channels.php' 
+    )
     ->withSchedule(function (Schedule $schedule) { // <-- AÑADE ESTE BLOQUE
         $schedule->command('payments:process-due')->daily();
     })

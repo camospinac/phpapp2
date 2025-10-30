@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+// use App\Models\User; // Ya no lo necesitamos
 use App\Models\Winner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -11,22 +11,36 @@ use Inertia\Inertia;
 
 class WinnerController extends Controller
 {
+    /**
+     * Muestra la lista de ganadores.
+     * Eliminamos la carga 'with('user')' porque ya no existe la relación.
+     */
     public function index()
     {
-        $winners = Winner::with('user')->latest()->paginate(10);
+        $winners = Winner::latest()->paginate(10); // <-- CAMBIO: Eliminado with('user')
         return Inertia::render('Admin/Winner/Index', ['winners' => $winners]);
     }
 
+    /**
+     * Muestra el formulario de creación.
+     * Ya no necesitamos pasar la lista de usuarios.
+     */
     public function create()
     {
-        $users = User::where('rol', 'usuario')->orderBy('nombres')->get(['id', 'nombres', 'apellidos']);
-        return Inertia::render('Admin/Winner/Create', ['users' => $users]);
+        // <-- CAMBIO: Eliminada la consulta de Users
+        return Inertia::render('Admin/Winner/Create');
     }
 
+    /**
+     * Almacena un nuevo ganador.
+     * Validamos 'nombre_completo' y 'cedula' en lugar de 'user_id'.
+     */
     public function store(Request $request)
     {
+        // <-- CAMBIO: Actualizada la validación
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'nombre_completo' => 'required|string|max:255',
+            'cedula' => 'required|string|max:20',
             'win_date' => 'required|date',
             'prize' => 'required|string|max:255',
             'city' => 'required|string|max:255',
@@ -35,8 +49,10 @@ class WinnerController extends Controller
 
         $path = $request->file('photo')->store('winners', 'public');
 
+        // <-- CAMBIO: Actualizados los campos de creación
         Winner::create([
-            'user_id' => $validated['user_id'],
+            'nombre_completo' => $validated['nombre_completo'],
+            'cedula' => $validated['cedula'],
             'win_date' => $validated['win_date'],
             'prize' => $validated['prize'],
             'city' => $validated['city'],
@@ -46,36 +62,47 @@ class WinnerController extends Controller
         return redirect()->route('admin.winners.index')->with('success', 'Ganador registrado con éxito.');
     }
 
+    /**
+     * Muestra el formulario de edición.
+     * Ya no necesitamos pasar la lista de usuarios.
+     */
     public function edit(Winner $winner)
     {
-        $users = User::where('rol', 'usuario')->orderBy('nombres')->get(['id', 'nombres', 'apellidos']);
+        // <-- CAMBIO: Eliminada la consulta de Users
         return Inertia::render('Admin/Winner/Edit', [
             'winner' => $winner,
-            'users' => $users,
+            // 'users' => $users, // Ya no se pasa
         ]);
     }
 
+    /**
+     * Actualiza un ganador existente.
+     * Validamos 'nombre_completo' y 'cedula' en lugar de 'user_id'.
+     */
     public function update(Request $request, Winner $winner)
     {
+        // <-- CAMBIO: Actualizada la validación
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'nombre_completo' => 'required|string|max:255',
+            'cedula' => 'required|string|max:20',
             'win_date' => 'required|date',
             'prize' => 'required|string|max:255',
             'city' => 'required|string|max:255',
-            'photo' => 'nullable|image|max:2048', // Photo is optional on update
+            'photo' => 'nullable|image|max:2048',
         ]);
 
         $path = $winner->photo_path;
         if ($request->hasFile('photo')) {
-            // Delete the old photo if it exists
             if ($winner->photo_path) {
                 Storage::disk('public')->delete($winner->photo_path);
             }
             $path = $request->file('photo')->store('winners', 'public');
         }
 
+        // <-- CAMBIO: Actualizados los campos de actualización
         $winner->update([
-            'user_id' => $validated['user_id'],
+            'nombre_completo' => $validated['nombre_completo'],
+            'cedula' => $validated['cedula'],
             'win_date' => $validated['win_date'],
             'prize' => $validated['prize'],
             'city' => $validated['city'],
@@ -85,9 +112,12 @@ class WinnerController extends Controller
         return redirect()->route('admin.winners.index')->with('success', 'Ganador actualizado con éxito.');
     }
 
+    /**
+     * Elimina un ganador.
+     * Este método no necesita cambios.
+     */
     public function destroy(Winner $winner)
     {
-        // Delete the photo from storage
         if ($winner->photo_path) {
             Storage::disk('public')->delete($winner->photo_path);
         }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Payment;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -19,8 +20,9 @@ class DatabaseSeeder extends Seeder
         $this->call(PlanSeeder::class);
         $this->call(RankSeeder::class);
         //$this->call(TestUserSeeder::class);
-        $this->call(WinnerSeeder::class);
+        //$this->call(WinnerSeeder::class);
         $this->call(RealisticUserSeeder::class);
+        $this->call(PaymentMethodSeeder::class);
         // User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',

@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { 
     LayoutGrid, 
     Users, 
-    ArrowLeftRight, 
+    ArrowLeftRight,
+    AreaChart,
     FileText, 
     Wallet, 
     CheckCircle,
@@ -33,6 +34,9 @@ const mainNavItems = computed<NavItem[]>(() => {
             { title: 'Reporte Pagos', href: route('admin.reports.payments'), icon: FileText },
             { title: 'Reporte Retiros', href: route('admin.reports.withdrawals'), icon: FileText },
             { title: 'Gestionar Usuarios', href: route('admin.users.index'), icon: Users },
+            { title: 'Flujo de Caja', href: route('admin.reports.dashboard'), icon: AreaChart },
+            { title: 'Métodos de Pago', href: route('admin.payment-methods.index'), icon: Wallet },
+            { title: 'Ganadores', href: route('admin.winners.index'), icon: ArrowLeftRight },
         ];
     }
     

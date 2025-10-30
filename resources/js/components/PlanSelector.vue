@@ -8,13 +8,38 @@ import { PlusCircle, MinusCircle } from 'lucide-vue-next';
 import { LoaderCircle } from 'lucide-vue-next';
 
 const currentStep = ref(1);
-const transferMethods = ref([
-    { name: 'Nequi', logo: '/img/logos/nequi.jpg', phone: '300 123 4567' },
-    { name: 'Daviplata', logo: '/img/logos/daviplata.png', phone: '310 987 6543' },
-    { name: 'Moovii', logo: '/img/logos/movi.jpg', phone: '320 555 1234' },
-]);
+interface PaymentMethod {
+    id: number;
+    name: string;
+    account_details: string; // Este es tu 'phone'
+    logo_path: string | null;      // Este es tu 'logo'
+}
 
-const selectedTransferMethod = ref(transferMethods.value[0]);
+// 2. Añadimos 'paymentMethods' a los props
+const props = defineProps<{
+    plans: Plan[];
+    totalAvailable: number;
+    paymentMethods: PaymentMethod[]; // <-- El nuevo prop
+}>();
+
+// 3. Reemplazamos el array 'quemado' con una función para obtener la URL
+const getLogoUrl = (path: string | null) => {
+    if (!path) return 'https://placehold.co/100x100/gray/white?text=Logo';
+    // Asumimos que están en public/storage/ como lo configuramos
+    return `/storage/${path}`;
+}
+
+// 4. Mapeamos el prop a la estructura que tu template espera
+const transferMethods = ref(props.paymentMethods.map(method => ({
+    name: method.name,
+    logo: getLogoUrl(method.logo_path),
+    phone: method.account_details, // Mapeamos 'account_details' a 'phone'
+})));
+
+// 5. Inicializamos el método seleccionado (de forma segura)
+const selectedTransferMethod = ref(transferMethods.value.length > 0 ? transferMethods.value[0] : null);
+
+// const selectedTransferMethod = ref(transferMethods.value[0]);
 
 const formatCurrency = (amount: number | string) => {
     const number = Number(amount);
@@ -42,10 +67,10 @@ interface Plan {
     closed_duration_days: number | null;
     percentages: number[] | null;
 }
-const props = defineProps<{
-    plans: Plan[];
-    totalAvailable: number;
-}>();
+// const props = defineProps<{
+//     plans: Plan[];
+//     totalAvailable: number;
+// }>();
 
 const emit = defineEmits(['submit']);
 
@@ -397,7 +422,7 @@ const decreaseAmount = () => {
                 <div class="grid grid-cols-3 gap-3">
                     <div v-for="method in transferMethods" :key="method.name" @click="selectedTransferMethod = method"
                         class="flex flex-col items-center justify-center p-3 border rounded-lg cursor-pointer transition-all"
-                        :class="{ 'ring-2 ring-primary border-primary': selectedTransferMethod.name === method.name }">
+                        :class="{ 'ring-2 ring-primary border-primary': selectedTransferMethod?.name === method.name }">
                         <img :src="method.logo" :alt="method.name" class="h-12 w-12 object-contain mb-2">
                         <span class="text-xs font-medium">{{ method.name }}</span>
                     </div>
@@ -406,8 +431,8 @@ const decreaseAmount = () => {
 
             <div class="p-4 rounded-lg bg-muted text-center">
                 <p class="text-sm text-muted-foreground">Realiza la transferencia al siguiente número de {{
-                    selectedTransferMethod.name }}:</p>
-                <p class="text-2xl font-mono font-bold my-2">{{ selectedTransferMethod.phone }}</p>
+                    selectedTransferMethod?.name }}:</p>
+                <p class="text-2xl font-mono font-bold my-2">{{ selectedTransferMethod?.phone }}</p>
             </div>
 
             <!-- <div class="p-4 rounded-lg bg-muted text-center">

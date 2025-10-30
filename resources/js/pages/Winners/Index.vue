@@ -9,18 +9,15 @@ register();
 
 
 // --- INTERFACES & PROPS ---
-interface User {
-    nombres: string;
-    apellidos: string;
-    identification_number: string;
-}
+
 interface Winner {
     id: number;
     prize: string;
     win_date: string;
     city: string;
     photo_path: string;
-    user: User;
+    nombre_completo: string;
+    cedula: string;
 }
 const props = defineProps<{
     winners: Winner[];
@@ -30,21 +27,34 @@ const prizeCategories = ref({
     tier1: {
         title: 'Inversiones de $200.000 a $1.000.000',
         prizes: [
-            { name: 'Viaje a Cartagena', imageUrl: '/img/premios/avionm.jpg' },
-            { name: 'iPhone 15 Pro', imageUrl: '/img/premios/iphone.jpg' },
-            { name: 'Smart TV 55"', imageUrl: '/img/premios/smart.jpg' },
-            { name: 'Bono 200 mil', imageUrl: '/img/premios/bono.png' },
-            { name: 'Bono 100 mil', imageUrl: '/img/premios/bono.png' },
-            { name: 'Bono 50 mil', imageUrl: '/img/premios/bono.png' },
+            { name: 'iPhone 16 Pro', imageUrl: '/img/premios/iphone16.png' },
+            { name: 'Smart TV 55"', imageUrl: '/img/premios/televisor.jpg' },
+            { name: 'Portátil', imageUrl: '/img/premios/computador.jpg' },
+            { name: 'Tablet', imageUrl: '/img/premios/tablet.jpeg' },
+            { name: 'Patineta eléctrica', imageUrl: '/img/premios/patineta.jpg' },
+            { name: 'Apple Watch', imageUrl: '/img/premios/watch.jpg' },
+            { name: 'PlayStation 5', imageUrl: '/img/premios/play5.jpg' },
+            { name: 'Xbox One', imageUrl: '/img/premios/xbox.jpg' },
+            { name: 'Nintendo Switch', imageUrl: '/img/premios/nintendo.jpg' },
+            { name: 'Parlante Bosé S1 Pro', imageUrl: '/img/premios/bose.jpg' },
         ]
     },
     tier2: {
         title: 'Inversiones Superiores a $1.000.000',
         prizes: [
-            { name: 'Moto 0km', imageUrl: '/img/premios/moto.png' },
+            { name: 'Moto MMax', imageUrl: '/img/premios/nmax.jpg' },
+            { name: 'Moto MT09', imageUrl: '/img/premios/mt09.jpg' },
+            { name: 'iPhone 17 Pro Max', imageUrl: '/img/premios/iphone17.png' },
+            { name: 'MacBook Pro', imageUrl: '/img/premios/macbook.jpg' },
+            { name: 'Moto eléctrica', imageUrl: '/img/premios/motoelectrica.png' },
+            { name: 'Viaje a Aruba', imageUrl: '/img/premios/aruba.jpg' },
+            { name: 'Viaje a Punta Cana', imageUrl: '/img/premios/puntacana.png' },
+            { name: 'Crucero', imageUrl: '/img/premios/crucero.jpg' },
+            { name: 'Carro 0km CX5', imageUrl: '/img/premios/mazda.png' },
         ]
     }
 });
+
 
 // --- LÓGICA PARA EL MODAL DE LA FOTO ---
 const isPrizeModalOpen = ref(false);
@@ -154,9 +164,9 @@ const maskIdentification = (id: string) => {
                                     class="h-12 w-12 rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-primary"
                                     @click="openPhotoModal(`/storage/${winner.photo_path}`)">
                             </td>
-                            <td class="p-3 font-medium">{{ winner.user.nombres }} {{ winner.user.apellidos }}</td>
+                            <td class="p-3 font-medium">{{ winner.nombre_completo }}</td>
                             <td class="p-3 font-mono text-muted-foreground">{{
-                                maskIdentification(winner.user.identification_number) }}</td>
+                                maskIdentification(winner.cedula) }}</td>
                             <td class="p-3">{{ winner.prize }}</td>
                             <td class="p-3 text-muted-foreground">{{ winner.city }}</td>
                             <td class="p-3 text-right text-muted-foreground">{{ formatDate(winner.win_date) }}</td>

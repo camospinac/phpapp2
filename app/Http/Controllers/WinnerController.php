@@ -10,9 +10,8 @@ class WinnerController extends Controller
 {
      public function index()
     {
-        $winners = Winner::with('user:id,nombres,apellidos,identification_number')
-            ->latest('win_date')
-            ->get();
+       $winners = Winner::latest('win_date')
+              ->get();
 
         return Inertia::render('Winners/Index', [
             'winners' => $winners,

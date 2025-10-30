@@ -3,6 +3,49 @@ import { Head } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { AlertTriangle, CheckCircle, Users, Wallet } from 'lucide-vue-next';
+import { onMounted, onUnmounted } from 'vue';
+import { useToast } from "vue-toastification"; // <-- 1. Importa el hook correcto
+import Echo from 'laravel-echo';
+
+declare global {
+    interface Window {
+        Echo: Echo<any>;
+    }
+}
+
+const toast = useToast(); // <-- 2. Inicializa el toast
+
+// Preparamos el sonido
+const notificationSound = new Audio('/sounds/notification.mp3');
+
+onMounted(() => {
+    window.Echo.private('admin-notifications')
+        .listen('NewWithdrawalRequest', (e: { userName: string, amount: string }) => {
+            
+            console.log('¡Nueva notificación!', e);
+
+            // 3. Mostramos el Toast (¡Así de fácil!)
+            toast.info(`Retiro de $${e.amount} de ${e.userName}`, {
+                timeout: 10000 // 10 segundos
+            });
+
+            // 4. Reproducimos el Sonido
+            notificationSound.play().catch(error => {
+                console.error("Error al reproducir sonido:", error);
+            });
+        })
+
+        .listen('NewInvestmentPending', (e: { userName: string, amount: string }) => {
+            console.log('¡Nueva notificación de Inversión!', e);
+            // Usamos un toast de "success" (verde) para este
+            toast.success(`Inversión de $${e.amount} de ${e.userName} (¡REVISA!)`);
+            notificationSound.play().catch(e => console.error("Error con sonido"));
+        });
+
+
+        
+});
+
 
 // --- INTERFACES PARA TIPADO ---
 interface Stats {

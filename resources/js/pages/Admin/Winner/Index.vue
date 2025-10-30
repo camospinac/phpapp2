@@ -15,7 +15,8 @@ interface Winner {
     win_date: string;
     city: string;
     photo_path: string;
-    user: User;
+    nombre_completo: string;
+    cedula: string;
 }
 defineProps<{
     winners: {
@@ -44,7 +45,7 @@ const deleteWinner = (id: number) => {
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="border-b">
-                            <th class="p-3 text-left">Foto</th> <th class="p-3 text-left">Usuario</th>
+                            <th class="p-3 text-left">Foto</th> <th class="p-3 text-left">Ganador</th>
                             <th class="p-3 text-left">Cédula</th> <th class="p-3 text-left">Premio</th>
                             <th class="p-3 text-left">Ciudad</th> <th class="p-3 text-left">Fecha</th>
                             <th class="p-3 text-center">Acciones</th>
@@ -56,8 +57,11 @@ const deleteWinner = (id: number) => {
                                 <img v-if="winner.photo_path" :src="`/storage/${winner.photo_path}`" alt="Foto" class="h-12 w-12 rounded-full object-cover">
                                 <span v-else class="text-xs text-muted-foreground">Sin foto</span>
                             </td>
-                            <td class="p-3 font-medium">{{ winner.user.nombres }} {{ winner.user.apellidos }}</td>
-                            <td class="p-3 text-muted-foreground">{{ winner.user.identification_number }}</td> <td class="p-3">{{ winner.prize }}</td>
+
+                            <td class="p-3 font-medium">{{ winner.nombre_completo }}</td>
+                            
+                            <td class="p-3 text-muted-foreground">{{ winner.cedula }}</td> 
+                            <td class="p-3">{{ winner.prize }}</td>
                             <td class="p-3 text-muted-foreground">{{ winner.city }}</td> <td class="p-3">{{ winner.win_date }}</td>
                             <td class="p-3">
                                 <div class="flex justify-center gap-2">

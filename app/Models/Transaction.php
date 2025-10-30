@@ -14,6 +14,7 @@ class Transaction extends Model
 
     protected $fillable = [
         'id_user',
+        'subscription_id',
         'tipo',
         'monto',
         'observacion',
@@ -34,6 +35,10 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class, 'id_user');
     }
+    public function subscription(): BelongsTo
+{
+    return $this->belongsTo(Subscription::class); // Asume 'subscription_id'
+}
 
     protected $appends = ['type_detail'];
     protected function typeDetail(): Attribute

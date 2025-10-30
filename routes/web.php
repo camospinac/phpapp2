@@ -11,15 +11,17 @@ use App\Http\Controllers\WithdrawalController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use App\Http\Controllers\Admin\WithdrawalController as AdminWithdrawalController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\ReferralController; 
+use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\WinnerController as AdminWinnerController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\CampaignController as AdminCampaignController;
+use App\Http\Controllers\Admin\FinancialDashboardController;
 use App\Http\Controllers\TransferController;
+use App\Http\Controllers\Admin\PaymentMethodController;
 
 
-use App\Http\Controllers\WinnerController; 
+use App\Http\Controllers\WinnerController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -43,12 +45,12 @@ Route::post('/find-user-by-code', [TransferController::class, 'findByReferralCod
 
 Route::post('/subscriptions/{subscription}/switch-to-closed', [SubscriptionController::class, 'switchToClosed'])
     ->middleware(['auth'])
-    ->name('subscriptions.switch'); 
+    ->name('subscriptions.switch');
 
 Route::post('/transfer', [TransferController::class, 'store'])
     ->middleware(['auth'])
     ->name('transfer.store');
-    
+
 Route::get('/dashboard/statement/download', [DashboardController::class, 'downloadStatement'])
     ->middleware(['auth'])
     ->name('dashboard.statement.download');
@@ -105,9 +107,13 @@ Route::middleware(['auth', 'is.admin'])->prefix('admin')->name('admin.')->group(
         ->name('withdrawals.complete');
 
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-         ->name('dashboard');
+        ->name('dashboard');
     Route::get('/reports/subscriptions', [AdminReportController::class, 'subscriptions'])
         ->name('reports.subscriptions');
+
+    Route::get('/reports/financial', [FinancialDashboardController::class, 'index'])
+        ->name('reports.dashboard');
+
     Route::get('/reports/payments', [AdminReportController::class, 'payments'])
         ->name('reports.payments');
     Route::get('/reports/withdrawals', [AdminReportController::class, 'withdrawals'])
@@ -120,10 +126,17 @@ Route::middleware(['auth', 'is.admin'])->prefix('admin')->name('admin.')->group(
         ->name('reports.withdrawals.export');
     Route::post('/users/block-all', [AdminUserController::class, 'blockAll'])
         ->name('users.block-all');
+    Route::get('/payment-methods', [PaymentMethodController::class, 'index'])
+        ->name('payment-methods.index');
 
+    Route::get('payment-methods/{paymentMethod}/edit', [PaymentMethodController::class, 'edit'])
+        ->name('payment-methods.edit');
+
+    Route::patch('payment-methods/{paymentMethod}', [PaymentMethodController::class, 'update'])
+        ->name('payment-methods.update');
     Route::resource('campaigns', AdminCampaignController::class);
     Route::resource('winners', AdminWinnerController::class);
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

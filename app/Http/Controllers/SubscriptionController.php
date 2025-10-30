@@ -138,6 +138,7 @@ class SubscriptionController extends Controller
         if ($newSubscription) {
             // Enviamos la confirmación al usuario
             Mail::to($user->email)->send(new NewSubscriptionEmail($newSubscription));
+            event(new \App\Events\NewInvestmentPending($newSubscription->load('user')));
 
             // Si está pendiente, notificamos al admin
             if ($newSubscription->status === 'pending_verification') {

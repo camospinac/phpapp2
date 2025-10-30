@@ -10,11 +10,15 @@ use App\Models\Plan;
 use App\Models\Transaction;
 use App\Models\Withdrawal; 
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\PaymentMethod;
 
 class DashboardController extends Controller
 {
     public function show()
     {
+        $paymentMethods = PaymentMethod::where('is_active', true)
+        ->get(['id', 'name', 'account_details', 'logo_path']);
+
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
@@ -75,6 +79,7 @@ class DashboardController extends Controller
             'totalGanancia' => $totalGanancia,
             'totalAvailable' => $totalAvailable,
             'withdrawals' => $withdrawals, 
+            'paymentMethods' => $paymentMethods,
         ]);
     }
 

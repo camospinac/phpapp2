@@ -16,18 +16,11 @@ class Winner extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id',
+        'nombre_completo',
+        'cedula',
         'win_date',
         'prize',
         'city',
         'photo_path',
     ];
-
-    /**
-     * Get the user who won the prize.
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 }
