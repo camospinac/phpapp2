@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Eye, EyeOff } from 'lucide-vue-next';
 
 const showPassword = ref(false);
@@ -26,6 +26,22 @@ const form = useForm({
     referral_code: '',
 });
 
+onMounted(() => {
+    // Lee los parámetros de la URL (ej: ?ref=CODE123)
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Busca un parámetro llamado 'ref'
+    const referralCode = urlParams.get('ref');
+
+    // Si SÍ lo encuentra...
+    if (referralCode) {
+        // Rellena el campo del formulario automáticamente
+        form.referral_code = referralCode;
+        
+        // ¡Y marca el checkbox de "Te invitó un amigo"!
+        showReferralInput.value = true;
+    }
+});
 
 const submit = () => {
     form.post(route('register'), {

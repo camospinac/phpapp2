@@ -9,6 +9,15 @@ import { Input } from '@/components/ui/input';
 import { TrendingUp, Landmark, Gift, Gem, Download, Send } from 'lucide-vue-next';
 import { onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Share2, Mail, MessageSquareText, Facebook  } from 'lucide-vue-next';
+
+
 
 import {
     Dialog,
@@ -328,6 +337,34 @@ const copyToClipboard = () => {
         });
     }
 };
+
+
+// --- 3. AÑADE ESTE BLOQUE ENTERO ---
+
+// 'window.location.origin' es tu dominio (ej: "https://tudominio.com")
+const shareBaseUrl = window.location.origin;
+
+// Crea el enlace de registro completo (ej: https://tudominio.com/register?ref=MI-CODIGO)
+
+const registrationLink = computed(() => {
+    return `${shareBaseUrl}/register?ref=${user.referral_code}`;
+});
+
+// Función para copiar el ENLACE (diferente a copiar SÓLO el código)
+const copyShareLink = () => {
+    navigator.clipboard.writeText(registrationLink.value);
+    // Aquí deberías mostrar un "toast" o alerta de "¡Enlace copiado!"
+    alert('¡Enlace de invitación copiado!');
+};
+
+// Genera los enlaces para las apps sociales
+const text = encodeURIComponent('¡Te invito a unirte a ganar con EON!');
+const whatsappUrl = computed(() => `https://api.whatsapp.com/send?text=${text} ${registrationLink.value}`);
+const facebookUrl = computed(() => `https://www.facebook.com/sharer/sharer.php?u=${registrationLink.value}`);
+const emailUrl = computed(() => `mailto:?subject=${text}&body=Regístrate usando mi enlace: ${registrationLink.value}`);
+
+// --- FIN DEL BLOQUE A AÑADIR ---
+
 </script>
 
 <template>
@@ -361,6 +398,7 @@ const copyToClipboard = () => {
 
                             <div v-if="user.referral_code" class="flex items-center gap-3 pt-2">
                                 <p class="text-sm font-medium text-muted-foreground">Tu código para invitar:</p>
+
                                 <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted border cursor-pointer hover:bg-secondary"
                                     @click="copyToClipboard" title="Copiar código">
                                     <span class="font-mono font-bold text-primary">{{ user.referral_code }}</span>
@@ -368,6 +406,45 @@ const copyToClipboard = () => {
                                         <Copy class="h-4 w-4 text-muted-foreground" />
                                     </button>
                                 </div>
+
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger as-child>
+                                        <button
+                                            class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+                                            title="Compartir enlace de invitación">
+                                            <Share2 class="h-4 w-4" />
+                                            <span class="text-sm font-medium">Compartir</span>
+                                        </button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuItem as-child>
+                                            <a :href="whatsappUrl" target="_blank" class="flex items-center gap-2">
+                                                <MessageSquareText class="h-4 w-4" />
+                                                <span>WhatsApp</span>
+                                            </a>
+                                        </DropdownMenuItem>
+
+                                        <DropdownMenuItem as-child>
+                                            <a :href="facebookUrl" target="_blank" class="flex items-center gap-2">
+                                                <Facebook class="h-4 w-4" />
+                                                <span>Facebook</span>
+                                            </a>
+                                        </DropdownMenuItem>
+
+                                        <DropdownMenuItem as-child>
+                                            <a :href="emailUrl" target="_blank" class="flex items-center gap-2">
+                                                <Mail class="h-4 w-4" />
+                                                <span>Email</span>
+                                            </a>
+                                        </DropdownMenuItem>
+
+                                        <DropdownMenuItem @click="copyShareLink" class="flex items-center gap-2">
+                                            <Send class="h-4 w-4" />
+                                            <span>Copiar enlace</span>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+
                             </div>
                         </div>
 
@@ -407,7 +484,7 @@ const copyToClipboard = () => {
                         <h3 class="text-lg font-medium text-muted-foreground">Ganancia Total</h3>
                         <p class="mt-1 text-4xl font-semibold tracking-tight text-blue-500">{{
                             formatCurrency(totalGanancia)
-                            }}</p>
+                        }}</p>
                     </div>
                 </div>
 
@@ -433,7 +510,7 @@ const copyToClipboard = () => {
                                 <div class="flex flex-col text-center">
                                     <span>{{ sub.plan.name }} #{{ sub.sequence_id }}</span>
                                     <span class="text-xs capitalize text-muted-foreground/80">({{ sub.contract_type
-                                        }})</span>
+                                    }})</span>
                                 </div>
                             </button>
                         </nav>
@@ -545,9 +622,9 @@ const copyToClipboard = () => {
                                             <td class="py-2 font-mono">#{{ sub.sequence_id }}</td>
                                             <td class="py-2">{{ sub.plan.name }}</td>
                                             <td class="py-2 font-mono">{{ formatCurrency(sub.initial_investment)
-                                                }}</td>
+                                            }}</td>
                                             <td class="py-2">{{ new Date(sub.created_at).toLocaleString('es-CO')
-                                                }}</td>
+                                            }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
