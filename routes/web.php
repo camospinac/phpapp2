@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\CampaignController as AdminCampaignController;
 use App\Http\Controllers\Admin\FinancialDashboardController;
 use App\Http\Controllers\TransferController;
 use App\Http\Controllers\Admin\PaymentMethodController;
+use App\Http\Controllers\Admin\RankController;
 
 
 use App\Http\Controllers\WinnerController;
@@ -136,6 +137,9 @@ Route::middleware(['auth', 'is.admin'])->prefix('admin')->name('admin.')->group(
         ->name('payment-methods.update');
     Route::resource('campaigns', AdminCampaignController::class);
     Route::resource('winners', AdminWinnerController::class);
+
+    Route::resource('ranks', App\Http\Controllers\Admin\RankController::class)->except(['show']);
+
 });
 
 require __DIR__ . '/settings.php';

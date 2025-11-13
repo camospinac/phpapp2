@@ -31,6 +31,15 @@ export type AppPageProps<T extends Record<string, unknown> = Record<string, unkn
     sidebarOpen: boolean;
 };
 
+export interface Rank {
+    id: number;
+    name: string;
+    required_referrals: number;
+    reward_description: string;
+    reward_percentage: number;
+    is_active: boolean;
+}
+
 export interface User {
     id: string;
     nombres: string;
@@ -38,7 +47,7 @@ export interface User {
     celular: string;
     referral_code: string | null;
     email: string;
-    rol: 'admin' | 'usuario';
+    rol: 'admin' | 'usuario' | 'asesor';
     rank: Rank | null;
     referral_count: number;
     next_rank: {

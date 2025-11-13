@@ -11,7 +11,7 @@ onMounted(() => {
     setInterval(() => {
         const increment = Math.floor(Math.random() * 5) + 1;
         investorCount.value += increment;
-    }, 2000); 
+    }, 450000); 
 });
 
 defineProps<{

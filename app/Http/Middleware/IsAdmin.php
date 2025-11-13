@@ -12,7 +12,7 @@ class IsAdmin
     public function handle(Request $request, Closure $next): Response
     {
         // 👇 2. CAMBIA auth() POR Auth::
-        if (Auth::check() && Auth::user()->rol === 'admin') {
+        if (Auth::check() && in_array(Auth::user()->rol, ['admin', 'asesor'])) {
             return $next($request);
         }
 

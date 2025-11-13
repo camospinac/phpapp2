@@ -2,26 +2,30 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Rank extends Model
 {
     use HasFactory;
 
-    // Le damos permiso para llenar estos campos masivamente
+    /**
+     * Los atributos que se pueden asignar en masa.
+     */
     protected $fillable = [
         'name',
         'required_referrals',
         'reward_description',
-        'reward_type',
-        'reward_amount',
+        'reward_percentage',
         'is_active',
     ];
 
-    // Un rango puede tener muchos usuarios
-    public function users()
-    {
-        return $this->hasMany(User::class);
-    }
+    /**
+     * Los atributos que deben ser casteados.
+     */
+    protected $casts = [
+        'is_active' => 'boolean',
+        'required_referrals' => 'integer',
+        'reward_percentage' => 'decimal:2',
+    ];
 }

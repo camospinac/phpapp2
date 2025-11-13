@@ -32,9 +32,18 @@ class InitialDataSeeder extends Seeder
             'nombres' => 'Admin',
             'apellidos' => 'Principal',
             'celular' => '3001234567',
-            'email' => 'admin@financepwa.com',
-            'password' => Hash::make('password'), // Contraseña: password
+            'email' => 'admin@grupoeon.com',
+            'password' => Hash::make('EON2025$'), // Contraseña: password
             'rol' => 'admin',
+        ]);
+
+        User::create([
+            'nombres' => 'Asesor',
+            'apellidos' => 'Comercial',
+            'celular' => '3001112233',
+            'email' => 'asesor@grupoeon.com',
+            'password' => Hash::make('4s3s0r2025$'), // Contraseña: password
+            'rol' => 'asesor', // <-- NUEVO ROL
         ]);
 
         // 2. Creamos un usuario de prueba
@@ -42,7 +51,7 @@ class InitialDataSeeder extends Seeder
             'nombres' => 'Usuario',
             'apellidos' => 'De Pruebas',
             'celular' => '3109876543',
-            'email' => 'usuario@financepwa.com',
+            'email' => 'usuario@grupoeon.com',
             'password' => Hash::make('password'), // Contraseña: password
             'rol' => 'usuario',
         ]);
