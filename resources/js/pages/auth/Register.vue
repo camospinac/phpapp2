@@ -29,7 +29,7 @@ const form = useForm({
 onMounted(() => {
     // Lee los parámetros de la URL (ej: ?ref=CODE123)
     const urlParams = new URLSearchParams(window.location.search);
-    
+
     // Busca un parámetro llamado 'ref'
     const referralCode = urlParams.get('ref');
 
@@ -37,7 +37,7 @@ onMounted(() => {
     if (referralCode) {
         // Rellena el campo del formulario automáticamente
         form.referral_code = referralCode;
-        
+
         // ¡Y marca el checkbox de "Te invitó un amigo"!
         showReferralInput.value = true;
     }
@@ -107,8 +107,8 @@ const submit = () => {
 
                 <div class="grid gap-2">
                     <Label for="email">Correo electrónico</Label>
-                    <Input id="email" type="email" required :tabindex="4" autocomplete="email" v-model="form.email"
-                        placeholder="email@dominio.com" />
+                    <Input id="email" type="email" required :tabindex="4" autocomplete="off" v-model="form.email"
+                        placeholder="email@dominio.com" readonly onfocus="this.removeAttribute('readonly');" />
                     <InputError :message="form.errors.email" />
                 </div>
 
@@ -128,7 +128,8 @@ const submit = () => {
                     <Label for="password">Contraseña</Label>
                     <div class="relative">
                         <Input id="password" :type="showPassword ? 'text' : 'password'" class="pr-10" required
-                            v-model="form.password" placeholder="Contraseña" />
+                            v-model="form.password" placeholder="Contraseña" autocomplete="new-password" readonly
+                            onfocus="this.removeAttribute('readonly');" />
                         <button type="button" @click="showPassword = !showPassword"
                             class="absolute inset-y-0 right-0 flex items-center justify-center h-full px-3 text-muted-foreground">
                             <Eye v-if="!showPassword" class="h-5 w-5" />
@@ -143,7 +144,8 @@ const submit = () => {
                     <div class="relative">
                         <Input id="password_confirmation" :type="showPasswordConfirmation ? 'text' : 'password'"
                             class="pr-10" required v-model="form.password_confirmation"
-                            placeholder="Confirmar contraseña" />
+                            placeholder="Confirmar contraseña" autocomplete="new-password" readonly
+                            onfocus="this.removeAttribute('readonly');" />
                         <button type="button" @click="showPasswordConfirmation = !showPasswordConfirmation"
                             class="absolute inset-y-0 right-0 flex items-center justify-center h-full px-3 text-muted-foreground">
                             <Eye v-if="!showPasswordConfirmation" class="h-5 w-5" />
