@@ -105,12 +105,23 @@ const submit = () => {
                 </div>
 
 
-                <div class="grid gap-2">
-                    <Label for="email">Correo electrónico</Label>
-                    <Input id="email" type="email" required :tabindex="4" autocomplete="off" v-model="form.email"
-                        placeholder="email@dominio.com" readonly onfocus="this.removeAttribute('readonly');" />
-                    <InputError :message="form.errors.email" />
-                </div>
+          <div class="grid gap-2">
+    <Label for="email">Correo electrónico</Label>
+    <Input 
+        id="email" 
+        type="text" 
+        inputmode="email" 
+        required 
+        :tabindex="4" 
+        autocomplete="off" 
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        v-model="form.email"
+        placeholder="email@dominio.com" 
+    />
+    <InputError :message="form.errors.email" />
+</div>
 
                 <div class="flex items-center space-x-2">
                     <input type="checkbox" id="has-referral" v-model="showReferralInput" />
@@ -125,35 +136,55 @@ const submit = () => {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password">Contraseña</Label>
-                    <div class="relative">
-                        <Input id="password" :type="showPassword ? 'text' : 'password'" class="pr-10" required
-                            v-model="form.password" placeholder="Contraseña" autocomplete="new-password" readonly
-                            onfocus="this.removeAttribute('readonly');" />
-                        <button type="button" @click="showPassword = !showPassword"
-                            class="absolute inset-y-0 right-0 flex items-center justify-center h-full px-3 text-muted-foreground">
-                            <Eye v-if="!showPassword" class="h-5 w-5" />
-                            <EyeOff v-else class="h-5 w-5" />
-                        </button>
-                    </div>
-                    <InputError :message="form.errors.password" />
-                </div>
+    <Label for="password">Contraseña</Label>
+    <div class="relative">
+        <Input 
+            id="password" 
+            type="text" 
+            class="pr-10" 
+            :class="{ 'mask-text': !showPassword }"
+            required
+            v-model="form.password" 
+            placeholder="*****" 
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+        />
+        
+        <button type="button" @click="showPassword = !showPassword"
+            class="absolute inset-y-0 right-0 flex items-center justify-center h-full px-3 text-muted-foreground z-10">
+            <Eye v-if="!showPassword" class="h-5 w-5" />
+            <EyeOff v-else class="h-5 w-5" />
+        </button>
+    </div>
+    <InputError :message="form.errors.password" />
+</div>
 
-                <div class="grid gap-2">
-                    <Label for="password_confirmation">Confirmar contraseña</Label>
-                    <div class="relative">
-                        <Input id="password_confirmation" :type="showPasswordConfirmation ? 'text' : 'password'"
-                            class="pr-10" required v-model="form.password_confirmation"
-                            placeholder="Confirmar contraseña" autocomplete="new-password" readonly
-                            onfocus="this.removeAttribute('readonly');" />
-                        <button type="button" @click="showPasswordConfirmation = !showPasswordConfirmation"
-                            class="absolute inset-y-0 right-0 flex items-center justify-center h-full px-3 text-muted-foreground">
-                            <Eye v-if="!showPasswordConfirmation" class="h-5 w-5" />
-                            <EyeOff v-else class="h-5 w-5" />
-                        </button>
-                    </div>
-                    <InputError :message="form.errors.password_confirmation" />
-                </div>
+               <div class="grid gap-2">
+    <Label for="password_confirmation">Confirmar contraseña</Label>
+    <div class="relative">
+        <Input 
+            id="password_confirmation" 
+            type="text"
+            class="pr-10" 
+            :class="{ 'mask-text': !showPasswordConfirmation }"
+            required 
+            v-model="form.password_confirmation"
+            placeholder="*****" 
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+        />
+        <button type="button" @click="showPasswordConfirmation = !showPasswordConfirmation"
+            class="absolute inset-y-0 right-0 flex items-center justify-center h-full px-3 text-muted-foreground z-10">
+            <Eye v-if="!showPasswordConfirmation" class="h-5 w-5" />
+            <EyeOff v-else class="h-5 w-5" />
+        </button>
+    </div>
+    <InputError :message="form.errors.password_confirmation" />
+</div>
 
 
                 <Button type="submit" class="mt-2 w-full" tabindex="7" :disabled="form.processing">
@@ -170,3 +201,17 @@ const submit = () => {
         </form>
     </AuthBase>
 </template>
+
+<style>
+/* CSS para engañar al iPhone */
+.mask-text {
+    -webkit-text-security: disc !important;
+    text-security: disc !important;
+    font-family: text-security-disc !important; /* Fallback por si acaso */
+}
+
+/* Opcional: Ajuste para que el texto no salte al cambiar de clase */
+input.mask-text {
+    letter-spacing: 2px; /* A veces los puntos se ven muy pegados */
+}
+</style>
