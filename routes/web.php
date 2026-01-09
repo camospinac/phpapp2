@@ -20,12 +20,15 @@ use App\Http\Controllers\Admin\FinancialDashboardController;
 use App\Http\Controllers\TransferController;
 use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\RankController;
+use App\Models\User;
 
 
 use App\Http\Controllers\WinnerController;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome');
+    return Inertia::render('Welcome', [
+        'totalInvestors' => User::where('rol', 'usuario')->count(),
+    ]);
 })->name('home');
 
 

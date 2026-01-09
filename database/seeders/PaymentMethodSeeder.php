@@ -11,22 +11,13 @@ class PaymentMethodSeeder extends Seeder
     {
         PaymentMethod::updateOrCreate(
             ['name' => 'Nequi'],
-            ['account_details' => 'Adjustar ADMIN', 'is_active' => true, 'logo_path' => 'logos/nequi.jpg']
-        );
-
-        PaymentMethod::updateOrCreate(
-            ['name' => 'Daviplata'],
-            ['account_details' => 'Adjustar ADMIN', 'is_active' => true, 'logo_path' => 'logos/daviplata.png']
+            ['account_details' => '316 780 9532', 'is_active' => true, 'logo_path' => 'logos/nequi.jpg']
         );
 
         PaymentMethod::updateOrCreate(
             ['name' => 'Bre-B'],
-            ['account_details' => 'Adjustar ADMIN', 'is_active' => true, 'logo_path' => 'logos/breb.png']
+            ['account_details' => '316 780 9532', 'is_active' => true, 'logo_path' => 'logos/breb.png']
         );
 
-        PaymentMethod::updateOrCreate(
-            ['name' => 'Movii'],
-            ['account_details' => 'Adjustar ADMIN', 'is_active' => true, 'logo_path' => 'logos/movi.jpg']
-        );
     }
 }

@@ -42,7 +42,7 @@ class InitialDataSeeder extends Seeder
             'apellidos' => 'Comercial',
             'celular' => '3001112233',
             'email' => 'asesor@grupoeon.com',
-            'password' => Hash::make('4s3s0r2025$'), // Contraseña: password
+            'password' => Hash::make('Admin2025$'), // Contraseña: password
             'rol' => 'asesor', // <-- NUEVO ROL
         ]);
 

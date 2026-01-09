@@ -3,25 +3,26 @@ import { Head, Link } from '@inertiajs/vue3';
 import { onMounted, ref, computed } from "vue";
 import counterUp from "counterup2";
 
-const getRandomStart = () => Math.floor(Math.random() * (600 - 500 + 1)) + 500;
+const props = defineProps<{
+  canLogin?: boolean;
+  canRegister?: boolean;
+  laravelVersion?: string;
+  phpVersion?: string;
+  totalInvestors: number; // Asegúrate de que esté aquí también
+}>();
 
-const investorCount = ref(getRandomStart());
 
+// 2. Inicializamos con el valor real
+// Si quieres que el número se vea más grande (marketing), podrías poner: props.totalInvestors + 500
+const investorCount = ref(props.totalInvestors + 376);
+
+// 3. Simulación de crecimiento (cada 7.5 minutos sube un poco)
 onMounted(() => {
     setInterval(() => {
         const increment = Math.floor(Math.random() * 5) + 1;
         investorCount.value += increment;
-    }, 450000); 
+    }, 50000); 
 });
-
-defineProps<{
-  canLogin?: boolean;
-  canRegister?: boolean;
-  laravelVersion: string;
-  phpVersion: string;
-}>();
-
-// --- LÓGICA DEL SIMULADOR ---
 
 // Datos de los planes (reflejan tu tabla 'plans')
 const plans = ref([
@@ -93,7 +94,7 @@ const calculatedPayments = computed(() => {
   }));
 });
 
-// --- LÓGICA DEL COUNTERUP (TU CÓDIGO ORIGINAL) ---
+// --- LÓGICA DEL COUNTERUP ---
 onMounted(() => {
   const counters = document.querySelectorAll<HTMLElement>('[data-toggle="counter-up"]');
   counters.forEach((el) => {
