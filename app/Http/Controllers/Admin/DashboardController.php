@@ -13,8 +13,15 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // --- CÁLCULOS PARA LAS TARJETAS DE RESUMEN ---
-        $totalUsers = User::where('rol', 'usuario')->count();
+        $realUsers = User::where('rol', 'usuario')
+            ->where('es_cuenta_prueba', false)
+            ->count();
+
+        // Usuarios de Prueba (es_cuenta_prueba = 1)
+        $testUsers = User::where('rol', 'usuario')
+            ->where('es_cuenta_prueba', true)
+            ->count();
+
         $activeSubscriptions = Subscription::where('status', 'active')->count();
         $pendingSubscriptions = Subscription::where('status', 'pending_verification')->count();
         $pendingWithdrawalsValue = Withdrawal::where('status', 'pending')->sum('amount');
@@ -42,7 +49,8 @@ class DashboardController extends Controller
 
         return Inertia::render('Admin/Dashboard', [
             'stats' => [
-                'totalUsers' => $totalUsers,
+                'realUsers' => $realUsers, // Mandamos el nuevo dato
+                'testUsers' => $testUsers,
                 'activeSubscriptions' => $activeSubscriptions,
                 'pendingSubscriptions' => $pendingSubscriptions,
                 'pendingWithdrawalsValue' => $pendingWithdrawalsValue,

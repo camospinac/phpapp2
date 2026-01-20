@@ -66,11 +66,11 @@ const formattedTransferAmount = computed({
     }
 });
 
-const getLogoUrl = (path: string | null) => {
-    if (!path) return 'https://placehold.co/100x100/gray/white?text=Logo';
-    // Asumimos que están en public/storage/ como lo configuramos
-    return `/storage/${path}`;
-}
+// const getLogoUrl = (path: string | null) => {
+//     if (!path) return 'https://placehold.co/100x100/gray/white?text=Logo';
+//     // Asumimos que están en public/storage/ como lo configuramos
+//     return `/storage/${path}`;
+// }
 
 // 4. Función COMPLETA para buscar al destinatario
 const findRecipient = () => {
@@ -293,6 +293,39 @@ const closeWithdrawalModal = () => {
 //     { name: 'Movi', value: 'MOVI', logo: '/img/logos/movi.jpg' },
 //     { name: 'Zelle', value: 'ZELLE', logo: '/img/logos/zelle.png' },
 // ];
+
+const getLogoUrl = (path: string | null) => {
+    if (!path) return 'https://placehold.co/100x100/gray/white?text=Logo';
+    
+    // 1. Si es una URL externa (empieza con http o https)
+    if (path.startsWith('http')) {
+        return path;
+    }
+    
+    // 2. Si es una ruta local de la carpeta public/img
+    if (path.startsWith('/img')) {
+        return path;
+    }
+    
+    // 3. Por defecto, asumimos que está en storage (archivos subidos)
+    return `/storage/${path}`;
+}
+
+// Definimos los métodos fijos
+const staticPaymentMethods = [
+    { 
+        id: 1, 
+        name: 'Nequi', 
+        logo_path: 'https://cdn.prod.website-files.com/6317a229ebf7723658463b4b/663a6b0d43303ddf38035997_logo-nequi.svg' 
+    },
+    { 
+        id: 2, 
+        name: 'Bre-B', 
+        logo_path: 'https://images.ctfassets.net/zc86zymizgq6/1Ay66qQPaLcLMzkd6ji8wH/890bfe40dfa4a3af1ca2c5ed6e52ddfa/logobre-b.png' 
+    },
+];
+
+
 
 const handleNewSubscription = (formData: ReturnType<typeof useForm>) => {
     formData.post(route('subscriptions.store'), {
@@ -957,16 +990,19 @@ const emailUrl = computed(() => `mailto:?subject=${text}&body=Regístrate usando
                         <div class="grid gap-2">
                             <Label>Enviar a</Label>
                             <div class="grid grid-cols-2 gap-3">
-                                <label v-for="method in paymentMethods" :key="method.id"
-                                    class="flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all"
-                                    :class="{ 'ring-2 ring-primary border-primary': withdrawalForm.payment_method === method.name }">
-                                    <input type="radio" v-model="withdrawalForm.payment_method" :value="method.name"
-                                        class="sr-only" />
-                                    <img :src="getLogoUrl(method.logo_path)" :alt="method.name"
-                                        class="h-16 w-full object-contain mb-2">
-                                    <span class="text-lg font-semibold">{{ method.name }}</span>
-                                </label>
-                            </div>
+    <label v-for="method in staticPaymentMethods" :key="method.id"
+        class="flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all"
+        :class="{ 'ring-2 ring-primary border-primary': withdrawalForm.payment_method === method.name }">
+        
+        <input type="radio" v-model="withdrawalForm.payment_method" :value="method.name"
+            class="sr-only" />
+        
+        <img :src="getLogoUrl(method.logo_path)" :alt="method.name"
+            class="h-16 w-full object-contain mb-2">
+            
+        <span class="text-lg font-semibold">{{ method.name }}</span>
+    </label>
+</div>
                             <InputError :message="withdrawalForm.errors.payment_method" />
                         </div>
 

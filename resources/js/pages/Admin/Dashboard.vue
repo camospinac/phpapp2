@@ -49,7 +49,8 @@ onMounted(() => {
 
 // --- INTERFACES PARA TIPADO ---
 interface Stats {
-    totalUsers: number;
+    realUsers: number;         // 👈 Cambiado
+    testUsers: number;
     activeSubscriptions: number;
     pendingSubscriptions: number;
     pendingWithdrawalsValue: number;
@@ -86,18 +87,27 @@ const formatCurrency = (amount: number) => {
     <Head title="Admin Dashboard" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex flex-col gap-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="p-6 rounded-xl border bg-card text-card-foreground">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-sm font-medium text-muted-foreground">Total Usuarios</h3>
-                        <Users class="h-5 w-5 text-muted-foreground" />
-                    </div>
-                    <p class="mt-2 text-3xl font-bold">{{ stats.totalUsers }}</p>
+<div class="flex flex-col gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            
+            <div class="p-6 rounded-xl border bg-card text-card-foreground shadow-sm">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-muted-foreground">Usuarios Reales</h3>
+                    <Users class="h-5 w-5 text-green-600" />
                 </div>
+                <p class="mt-2 text-3xl font-bold">{{ stats.realUsers }}</p>
+            </div>
+
+            <div class="p-6 rounded-xl border bg-card text-card-foreground shadow-sm border-dashed">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-muted-foreground">Usuarios Prueba</h3>
+                    <Users class="h-5 w-5 text-orange-400" />
+                </div>
+                <p class="mt-2 text-3xl font-bold text-muted-foreground">{{ stats.testUsers }}</p>
+            </div>
                 <div class="p-6 rounded-xl border bg-card text-card-foreground">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-sm font-medium text-muted-foreground">Suscripciones Activas</h3>
+                        <h3 class="text-sm font-medium text-muted-foreground">Planes Activos</h3>
                         <CheckCircle class="h-5 w-5 text-green-500" />
                     </div>
                     <p class="mt-2 text-3xl font-bold">{{ stats.activeSubscriptions }}</p>

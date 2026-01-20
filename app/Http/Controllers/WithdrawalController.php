@@ -22,7 +22,7 @@ class WithdrawalController extends Controller
         $abonos = $user->transactions()->where('tipo', 'abono')->sum('monto');
         $retiros = $user->transactions()->where('tipo', 'retiro')->sum('monto');
         $totalAvailable = $abonos - $retiros;
-        $paymentMethods = ['ZELLE', 'MOVI', 'NEQUI', 'DAVIPLATA', 'TRANSFIYA'];
+        $paymentMethods = ['Nequi', 'Bre-B'];
 
         // Validamos que el monto sea válido y no exceda el saldo
         $request->validate([
