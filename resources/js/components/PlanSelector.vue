@@ -417,18 +417,20 @@ const decreaseAmount = () => {
             </div>
         </div>
         <div v-else-if="currentStep === 2" class="grid gap-6">
-            <div class="grid gap-2">
-                <Label>Elige dónde realizar el pago</Label>
-                <div class="grid grid-cols-3 gap-3">
+            <div class="grid gap-4">
+                <Label class="text-base font-semibold">Elige dónde realizar el pago</Label>
+
+                <div class="grid grid-cols-2 gap-4">
                     <div v-for="method in transferMethods" :key="method.name" @click="selectedTransferMethod = method"
-                        class="flex flex-col items-center justify-center p-3 border rounded-lg cursor-pointer transition-all"
-                        :class="{ 'ring-2 ring-primary border-primary': selectedTransferMethod?.name === method.name }">
-                        <img :src="method.logo" :alt="method.name" class="h-12 w-12 object-contain mb-2">
-                        <span class="text-xs font-medium">{{ method.name }}</span>
+                        class="flex flex-col items-center justify-center p-6 border-2 rounded-xl cursor-pointer transition-all hover:bg-slate-50"
+                        :class="{ 'ring-4 ring-primary border-primary bg-primary/5': selectedTransferMethod?.name === method.name }">
+
+                        <img :src="method.logo" :alt="method.name" class="h-24 w-24 object-contain mb-4">
+
+                        <span class="text-lg font-bold text-center">{{ method.name }}</span>
                     </div>
                 </div>
             </div>
-
             <div class="p-4 rounded-lg bg-muted text-center">
                 <p class="text-sm text-muted-foreground">Realiza la transferencia al siguiente número de {{
                     selectedTransferMethod?.name }}:</p>

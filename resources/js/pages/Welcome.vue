@@ -14,7 +14,7 @@ const props = defineProps<{
 
 // 2. Inicializamos con el valor real
 // Si quieres que el número se vea más grande (marketing), podrías poner: props.totalInvestors + 500
-const investorCount = ref(props.totalInvestors + 376);
+const investorCount = ref(props.totalInvestors + 100);
 
 // 3. Simulación de crecimiento (cada 7.5 minutos sube un poco)
 onMounted(() => {
@@ -313,7 +313,7 @@ onMounted(() => {
             </div>
             <div class="ps-4">
               <h5 class="mb-2">Habla con un asesor</h5>
-              <h4 class="text-primary mb-0">+012 345 6789</h4>
+              <h4 class="text-primary mb-0">+57 305 764 2394</h4>
             </div>
           </div>
         </div>
@@ -558,7 +558,7 @@ onMounted(() => {
             </div>
             <div class="ps-4">
               <h5 class="mb-2">¿Tienes dudas? Escríbenos</h5>
-              <h4 class="text-primary mb-0">+57 300 123 4567</h4>
+              <h4 class="text-primary mb-0">+57 305 764 2394</h4>
             </div>
           </div>
         </div>
@@ -645,22 +645,21 @@ onMounted(() => {
               </div>
               <div class="d-flex mb-2">
                 <i class="bi bi-geo-alt text-primary me-2" style="color: #444444;"></i>
-                <p class="mb-0" style="color: #444444;">Calle 123, Bogotá DC, Colombia</p>
+                <p class="mb-0" style="color: #444444;">66 West Flagler Street, Miami, Florida 33130</p>
               </div>
               <div class="d-flex mb-2">
                 <i class="bi bi-envelope-open text-primary me-2"></i>
-                <p class="mb-0" style="color: #444444;">soporte@grupoeon.com</p>
+                <p class="mb-0" style="color: #444444;">asesor@grupoeon.com</p>
               </div>
               <div class="d-flex mb-2">
                 <i class="bi bi-telephone text-primary me-2"></i>
-                <p class="mb-0" style="color: #444444;">+012 345 67890</p>
+                <p class="mb-0" style="color: #444444;">+1 564 174 8562</p>
               </div>
-              <div class="d-flex mt-4">
-                <a class="btn btn-primary btn-square me-2" href="#"><i class="fab fa-twitter fw-normal"></i></a>
-                <a class="btn btn-primary btn-square me-2" href="#"><i class="fab fa-facebook-f fw-normal"></i></a>
-                <a class="btn btn-primary btn-square me-2" href="#"><i class="fab fa-linkedin-in fw-normal"></i></a>
-                <a class="btn btn-primary btn-square" href="#"><i class="fab fa-instagram fw-normal"></i></a>
+              <div class="d-flex mb-2">
+                <i class="bi bi-telephone text-primary me-2"></i>
+                <p class="mb-0" style="color: #444444;">+57 305 764 2394</p>
               </div>
+             
             </div>
 
           </div>

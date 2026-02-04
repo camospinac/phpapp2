@@ -47,6 +47,7 @@ class RegisteredUserController extends Controller
             'identification_type' => ['required', Rule::in($documentTypes)], // Valida que sea uno de los tipos permitidos
             'identification_number' => 'required|string|max:255|unique:'.User::class, // Asegura que el número de ID sea único
             'celular' => 'required|string|max:20|unique:users',
+            'location' => 'required|string|max:500',
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'referral_code' => ['nullable', 'string', 'exists:users,referral_code'], // Valida que el código de referido exista
@@ -65,6 +66,7 @@ class RegisteredUserController extends Controller
             'identification_type' => $request->identification_type,
             'identification_number' => $request->identification_number,
             'celular' => $request->celular,
+            'location' => $request->location,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'referred_by_id' => $referrer?->id, // Guardamos el ID del referidor

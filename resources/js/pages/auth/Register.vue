@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { Eye, EyeOff } from 'lucide-vue-next';
 
 const showPassword = ref(false);
@@ -24,7 +24,13 @@ const form = useForm({
     password: '',
     password_confirmation: '',
     referral_code: '',
+
+    location: '',
+    temp_departamento: '',
+    temp_ciudad: '',
 });
+
+
 
 onMounted(() => {
     // Lee los parámetros de la URL (ej: ?ref=CODE123)
@@ -43,10 +49,25 @@ onMounted(() => {
     }
 });
 
+const availableCities = computed(() => {
+    return form.temp_departamento ? colombiaData[form.temp_departamento] : [];
+});
+
 const submit = () => {
+
+    form.location = `Colombia, ${form.temp_departamento}, ${form.temp_ciudad}`;
+
     form.post(route('register'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
+};
+
+const colombiaData: Record<string, string[]> = {
+    "Antioquia": ["Medellín", "Bello", "Envigado", "Itagüí"],
+    "Bogotá D.C.": ["Bogotá"],
+    "Cundinamarca": ["Girardot", "Zipaquirá", "Fusagasugá", "Facatativá"],
+    "Valle del Cauca": ["Cali", "Palmira", "Buga", "Tuluá"],
+    "Atlántico": ["Barranquilla", "Soledad", "Puerto Colombia"]
 };
 </script>
 
@@ -105,23 +126,41 @@ const submit = () => {
                 </div>
 
 
-          <div class="grid gap-2">
-    <Label for="email">Correo electrónico</Label>
-    <Input 
-        id="email" 
-        type="text" 
-        inputmode="email" 
-        required 
-        :tabindex="4" 
-        autocomplete="off" 
-        autocorrect="off"
-        autocapitalize="off"
-        spellcheck="false"
-        v-model="form.email"
-        placeholder="email@dominio.com" 
-    />
-    <InputError :message="form.errors.email" />
+                <div class="grid gap-2">
+                    <Label for="email">Correo electrónico</Label>
+                    <Input id="email" type="text" inputmode="email" required :tabindex="4" autocomplete="off"
+                        autocorrect="off" autocapitalize="off" spellcheck="false" v-model="form.email"
+                        placeholder="email@dominio.com" />
+                    <InputError :message="form.errors.email" />
+                </div>
+<div class="grid gap-2">
+    <Label>País</Label>
+    <Input placeholder="Colombia" disabled class="bg-muted opacity-100" />
 </div>
+                <div class="grid gap-2">
+                    <Label for="departamento">Departamento</Label>
+                    <select id="departamento" v-model="form.temp_departamento" @change="form.temp_ciudad = ''"
+                        class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        required>
+                        <option value="" disabled selected>-- Selecciona Departamento --</option>
+                        <option v-for="(cities, dept) in colombiaData" :key="dept" :value="dept">
+                            {{ dept }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="ciudad">Ciudad</Label>
+                    <select id="ciudad" v-model="form.temp_ciudad" :disabled="!form.temp_departamento"
+                        class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        :class="{ 'opacity-50': !form.temp_departamento }" required>
+                        <option value="" disabled selected>-- Selecciona Ciudad --</option>
+                        <option v-for="city in availableCities" :key="city" :value="city">
+                            {{ city }}
+                        </option>
+                    </select>
+                    <InputError :message="form.errors.location" />
+                </div>
 
                 <div class="flex items-center space-x-2">
                     <input type="checkbox" id="has-referral" v-model="showReferralInput" />
@@ -136,55 +175,36 @@ const submit = () => {
                 </div>
 
                 <div class="grid gap-2">
-    <Label for="password">Contraseña</Label>
-    <div class="relative">
-        <Input 
-            id="password" 
-            type="text" 
-            class="pr-10" 
-            :class="{ 'mask-text': !showPassword }"
-            required
-            v-model="form.password" 
-            placeholder="*****" 
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="false"
-        />
-        
-        <button type="button" @click="showPassword = !showPassword"
-            class="absolute inset-y-0 right-0 flex items-center justify-center h-full px-3 text-muted-foreground z-10">
-            <Eye v-if="!showPassword" class="h-5 w-5" />
-            <EyeOff v-else class="h-5 w-5" />
-        </button>
-    </div>
-    <InputError :message="form.errors.password" />
-</div>
+                    <Label for="password">Contraseña</Label>
+                    <div class="relative">
+                        <Input id="password" type="text" class="pr-10" :class="{ 'mask-text': !showPassword }" required
+                            v-model="form.password" placeholder="*****" autocomplete="off" autocorrect="off"
+                            autocapitalize="off" spellcheck="false" />
 
-               <div class="grid gap-2">
-    <Label for="password_confirmation">Confirmar contraseña</Label>
-    <div class="relative">
-        <Input 
-            id="password_confirmation" 
-            type="text"
-            class="pr-10" 
-            :class="{ 'mask-text': !showPasswordConfirmation }"
-            required 
-            v-model="form.password_confirmation"
-            placeholder="*****" 
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="false"
-        />
-        <button type="button" @click="showPasswordConfirmation = !showPasswordConfirmation"
-            class="absolute inset-y-0 right-0 flex items-center justify-center h-full px-3 text-muted-foreground z-10">
-            <Eye v-if="!showPasswordConfirmation" class="h-5 w-5" />
-            <EyeOff v-else class="h-5 w-5" />
-        </button>
-    </div>
-    <InputError :message="form.errors.password_confirmation" />
-</div>
+                        <button type="button" @click="showPassword = !showPassword"
+                            class="absolute inset-y-0 right-0 flex items-center justify-center h-full px-3 text-muted-foreground z-10">
+                            <Eye v-if="!showPassword" class="h-5 w-5" />
+                            <EyeOff v-else class="h-5 w-5" />
+                        </button>
+                    </div>
+                    <InputError :message="form.errors.password" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="password_confirmation">Confirmar contraseña</Label>
+                    <div class="relative">
+                        <Input id="password_confirmation" type="text" class="pr-10"
+                            :class="{ 'mask-text': !showPasswordConfirmation }" required
+                            v-model="form.password_confirmation" placeholder="*****" autocomplete="off"
+                            autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        <button type="button" @click="showPasswordConfirmation = !showPasswordConfirmation"
+                            class="absolute inset-y-0 right-0 flex items-center justify-center h-full px-3 text-muted-foreground z-10">
+                            <Eye v-if="!showPasswordConfirmation" class="h-5 w-5" />
+                            <EyeOff v-else class="h-5 w-5" />
+                        </button>
+                    </div>
+                    <InputError :message="form.errors.password_confirmation" />
+                </div>
 
 
                 <Button type="submit" class="mt-2 w-full" tabindex="7" :disabled="form.processing">
@@ -207,11 +227,13 @@ const submit = () => {
 .mask-text {
     -webkit-text-security: disc !important;
     text-security: disc !important;
-    font-family: text-security-disc !important; /* Fallback por si acaso */
+    font-family: text-security-disc !important;
+    /* Fallback por si acaso */
 }
 
 /* Opcional: Ajuste para que el texto no salte al cambiar de clase */
 input.mask-text {
-    letter-spacing: 2px; /* A veces los puntos se ven muy pegados */
+    letter-spacing: 2px;
+    /* A veces los puntos se ven muy pegados */
 }
 </style>

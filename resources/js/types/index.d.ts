@@ -48,6 +48,7 @@ export interface User {
     referral_code: string | null;
     email: string;
     rol: 'admin' | 'usuario' | 'asesor';
+    location: string;
     rank: Rank | null;
     referral_count: number;
     next_rank: {

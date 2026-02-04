@@ -27,10 +27,12 @@ class User extends Authenticatable
         'password',
         'rol',
         'referral_code',
+        'location',
         'referred_by_id',
         'identification_type',
         'identification_number',
-         'is_fraud',
+        'is_fraud',
+
     ];
 
     /**

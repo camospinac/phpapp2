@@ -30,6 +30,7 @@ const form = useForm({
     apellidos: '',
     celular: '',
     email: '',
+    location: '',
     rol: 'usuario',
     password: '',
     password_confirmation: '',
@@ -49,6 +50,7 @@ const openEditModal = (user: User) => {
     form.apellidos = user.apellidos;
     form.celular = user.celular;
     form.email = user.email;
+    form.location = user.location;
     form.rol = user.rol;
     form.password = '';
     form.password_confirmation = '';
@@ -140,6 +142,7 @@ const executeBlockAll = () => {
                                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-0">Nombre</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-foreground">Email</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-foreground">Celular</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-foreground">Ubicación</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-foreground">Rol</th>
                                     <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                                         <span class="sr-only">Edit</span>
@@ -158,6 +161,7 @@ const executeBlockAll = () => {
                 </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">{{ user.email }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">{{ user.celular }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">{{ user.location }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">{{ user.rol }}</td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                         <Button variant="ghost" @click="openEditModal(user)" class="mr-2">Editar</Button>
