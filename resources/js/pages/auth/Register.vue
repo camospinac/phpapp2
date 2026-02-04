@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { Eye, EyeOff } from 'lucide-vue-next';
 
 const showPassword = ref(false);
@@ -49,26 +49,53 @@ onMounted(() => {
     }
 });
 
-const availableCities = computed(() => {
-    return form.temp_departamento ? colombiaData[form.temp_departamento] : [];
-});
+
 
 const submit = () => {
 
-    form.location = `Colombia, ${form.temp_departamento}, ${form.temp_ciudad}`;
+    form.location = `Colombia, ${selectedDept.value?.name}, ${selectedCityName.value}`;
 
     form.post(route('register'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
 };
 
-const colombiaData: Record<string, string[]> = {
-    "Antioquia": ["Medellín", "Bello", "Envigado", "Itagüí"],
-    "Bogotá D.C.": ["Bogotá"],
-    "Cundinamarca": ["Girardot", "Zipaquirá", "Fusagasugá", "Facatativá"],
-    "Valle del Cauca": ["Cali", "Palmira", "Buga", "Tuluá"],
-    "Atlántico": ["Barranquilla", "Soledad", "Puerto Colombia"]
+const departments = ref<{ id: number; name: string }[]>([]);
+const cities = ref<{ id: number; name: string }[]>([]);
+const loadingCities = ref(false);
+
+// Variables temporales para el UI
+const selectedDept = ref<{ id: number; name: string } | null>(null);
+const selectedCityName = ref('');
+
+// 1. Cargar departamentos al iniciar
+onMounted(async () => {
+    try {
+        const response = await fetch('https://api-colombia.com/api/v1/Department');
+        departments.value = await response.json();
+    } catch (error) {
+        console.error("Error cargando departamentos", error);
+    }
+});
+
+// 2. Cargar ciudades cuando cambie el departamento
+const handleDeptChange = async () => {
+    if (!selectedDept.value) return;
+    
+    cities.value = [];
+    selectedCityName.value = '';
+    loadingCities.value = true;
+    
+    try {
+        const response = await fetch(`https://api-colombia.com/api/v1/Department/${selectedDept.value.id}/cities`);
+        cities.value = await response.json();
+    } catch (error) {
+        console.error("Error cargando ciudades", error);
+    } finally {
+        loadingCities.value = false;
+    }
 };
+
 </script>
 
 
@@ -135,32 +162,35 @@ const colombiaData: Record<string, string[]> = {
                 </div>
 <div class="grid gap-2">
     <Label>País</Label>
-    <Input placeholder="Colombia" disabled class="bg-muted opacity-100" />
+    <Input value="Colombia" readonly class="bg-muted cursor-not-allowed" tabindex="-1" />
 </div>
-                <div class="grid gap-2">
-                    <Label for="departamento">Departamento</Label>
-                    <select id="departamento" v-model="form.temp_departamento" @change="form.temp_ciudad = ''"
-                        class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm"
-                        required>
-                        <option value="" disabled selected>-- Selecciona Departamento --</option>
-                        <option v-for="(cities, dept) in colombiaData" :key="dept" :value="dept">
-                            {{ dept }}
-                        </option>
-                    </select>
-                </div>
 
-                <div class="grid gap-2">
-                    <Label for="ciudad">Ciudad</Label>
-                    <select id="ciudad" v-model="form.temp_ciudad" :disabled="!form.temp_departamento"
-                        class="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm"
-                        :class="{ 'opacity-50': !form.temp_departamento }" required>
-                        <option value="" disabled selected>-- Selecciona Ciudad --</option>
-                        <option v-for="city in availableCities" :key="city" :value="city">
-                            {{ city }}
-                        </option>
-                    </select>
-                    <InputError :message="form.errors.location" />
-                </div>
+<div class="grid gap-2">
+    <Label for="dept">Departamento</Label>
+    <select id="dept" v-model="selectedDept" @change="handleDeptChange"
+        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary"
+        required>
+        <option :value="null" disabled>-- Selecciona Departamento --</option>
+        <option v-for="dept in departments" :key="dept.id" :value="dept">
+            {{ dept.name }}
+        </option>
+    </select>
+</div>
+
+<div class="grid gap-2">
+    <Label for="city">Ciudad</Label>
+    <select id="city" v-model="selectedCityName" :disabled="!selectedDept || loadingCities"
+        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary disabled:opacity-50"
+        required>
+        <option value="" disabled>
+            {{ loadingCities ? 'Cargando ciudades...' : '-- Selecciona Ciudad --' }}
+        </option>
+        <option v-for="city in cities" :key="city.id" :value="city.name">
+            {{ city.name }}
+        </option>
+    </select>
+    <InputError :message="form.errors.location" />
+</div>
 
                 <div class="flex items-center space-x-2">
                     <input type="checkbox" id="has-referral" v-model="showReferralInput" />
