@@ -297,10 +297,8 @@ onMounted(() => {
             <div class="p-4 bg-light rounded shadow-sm">
               <h4 class="text-primary mb-3"><i class="fa fa-bullseye me-2"></i>Misión</h4>
               <p class="mb-0">
-                Extraemos y transformamos recursos de manera inteligente, eficiente y responsable con prácticas
-                innovadoras para descarbonizar y reducir el impacto ambiental. Nos comprometemos a generar valor
-                sostenible para accionistas, comunidades y el entorno, equilibrando desarrollo y bienestar para un
-                futuro más limpio y sostenible.
+                Extraer y transformar recursos de manera inteligente, eficiente y responsable, aplicando prácticas innovadoras que reduzcan la huella ambiental y contribuyan a la descarbonización.
+Nos comprometemos a generar valor sostenible para inversionistas, comunidades y el entorno, equilibrando crecimiento económico y bienestar social para un futuro más limpio y sostenible.
               </p>
             </div>
           </div>
@@ -313,7 +311,7 @@ onMounted(() => {
             </div>
             <div class="ps-4">
               <h5 class="mb-2">Habla con un asesor</h5>
-              <h4 class="text-primary mb-0">+57 305 764 2394</h4>
+              <h4 class="text-primary mb-0">+57 321 3705763</h4>
             </div>
           </div>
         </div>
@@ -356,9 +354,8 @@ onMounted(() => {
                 style="width: 60px; height: 60px;">
                 <i class="fa fa-award text-white"></i>
               </div>
-              <h4>Inversionistas Sastifechos</h4>
-              <p class="mb-0">Generamos confianza y resultados con procesos responsables, innovación, sostenibilidad y
-                transparencia.</p>
+              <h4>Inversionistas satisfechos</h4>
+              <p class="mb-0">Construimos relaciones basadas en confianza, resultados y transparencia, respaldadas por procesos responsables, innovación constante y una gestión ética del capital</p>
             </div>
           </div>
         </div>
@@ -375,9 +372,8 @@ onMounted(() => {
                 style="width: 60px; height: 60px;">
                 <i class="fa fa-users-cog text-white"></i>
               </div>
-              <h4>Equipo de Profesionales</h4>
-              <p class="mb-0">Nuestro equipo experto en finanzas con enfoque en minería, energía y tecnología garantiza
-                procesos eficientes, seguros y sostenibles</p>
+              <h4>Equipo de profesionales</h4>
+              <p class="mb-0">Contamos con un equipo experto en finanzas, minería, energía y tecnología, que garantiza procesos eficientes, seguros y orientados a la sostenibilidad.</p>
             </div>
             <div class="col-12 wow zoomIn" data-wow-delay="0.8s">
               <div class="bg-primary rounded d-flex align-items-center justify-content-center mb-3"
@@ -558,7 +554,7 @@ onMounted(() => {
             </div>
             <div class="ps-4">
               <h5 class="mb-2">¿Tienes dudas? Escríbenos</h5>
-              <h4 class="text-primary mb-0">+57 305 764 2394</h4>
+              <h4 class="text-primary mb-0">+57 321 3705763</h4>
             </div>
           </div>
         </div>
@@ -657,7 +653,7 @@ onMounted(() => {
               </div>
               <div class="d-flex mb-2">
                 <i class="bi bi-telephone text-primary me-2"></i>
-                <p class="mb-0" style="color: #444444;">+57 305 764 2394</p>
+                <p class="mb-0" style="color: #444444;">+57 321 3705763</p>
               </div>
              
             </div>

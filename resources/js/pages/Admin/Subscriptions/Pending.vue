@@ -69,6 +69,15 @@ const approveSubscription = (subscriptionId: number) => {
     }
 };
 
+const rejectSubscription = (subscriptionId: number) => {
+    if (confirm('¿Estás seguro de que quieres RECHAZAR esta suscripción?')) {
+        // Asumiendo que crearás una ruta para rechazar
+        router.patch(route('admin.subscriptions.reject', { subscription: subscriptionId }), {}, {
+            preserveScroll: true,
+        });
+    }
+};
+
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-CO', {
         style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0,
@@ -128,9 +137,16 @@ const formatDate = (dateString: string) => {
                                 <span v-else class="text-xs text-muted-foreground">N/A</span>
                             </td>
                             <td class="px-4 py-3 text-center">
-                                <Button @click="approveSubscription(sub.id)" size="sm">
-                                    Aprobar
-                                </Button>
+                                <div class="flex items-center justify-center gap-2">
+                                    <Button @click="approveSubscription(sub.id)" size="sm"
+                                        class="bg-green-600 hover:bg-green-700">
+                                        Aprobar
+                                    </Button>
+
+                                    <Button @click="rejectSubscription(sub.id)" variant="destructive" size="sm">
+                                        Rechazar
+                                    </Button>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -139,7 +155,7 @@ const formatDate = (dateString: string) => {
         </div>
     </AppLayout>
 
-        <Dialog :open="isReceiptModalOpen" @update:open="isReceiptModalOpen = false">
+    <Dialog :open="isReceiptModalOpen" @update:open="isReceiptModalOpen = false">
         <DialogContent class="p-2 sm:max-w-xl">
             <img :src="selectedReceiptUrl" alt="Comprobante de Pago" class="w-full rounded-lg">
         </DialogContent>

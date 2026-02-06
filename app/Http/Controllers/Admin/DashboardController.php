@@ -21,8 +21,19 @@ class DashboardController extends Controller
         $testUsers = User::where('rol', 'usuario')
             ->where('es_cuenta_prueba', true)
             ->count();
+$activeRealSubscriptions = Subscription::where('status', 'active')
+        ->whereHas('user', function($query) {
+            $query->where('es_cuenta_prueba', false);
+        })->count();
 
-        $activeSubscriptions = Subscription::where('status', 'active')->count();
+    // Planes Activos - Usuarios de PRUEBA
+    $activeTestSubscriptions = Subscription::where('status', 'active')
+        ->whereHas('user', function($query) {
+            $query->where('es_cuenta_prueba', true);
+        })->count();
+
+    $pendingSubscriptions = Subscription::where('status', 'pending_verification')->count();
+    $pendingWithdrawalsValue = Withdrawal::where('status', 'pending')->sum('amount');
         $pendingSubscriptions = Subscription::where('status', 'pending_verification')->count();
         $pendingWithdrawalsValue = Withdrawal::where('status', 'pending')->sum('amount');
 
@@ -51,7 +62,9 @@ class DashboardController extends Controller
             'stats' => [
                 'realUsers' => $realUsers, // Mandamos el nuevo dato
                 'testUsers' => $testUsers,
-                'activeSubscriptions' => $activeSubscriptions,
+                'activeRealSubscriptions' => $activeRealSubscriptions, // Nuevo
+            'activeTestSubscriptions' => $activeTestSubscriptions,
+                
                 'pendingSubscriptions' => $pendingSubscriptions,
                 'pendingWithdrawalsValue' => $pendingWithdrawalsValue,
             ],

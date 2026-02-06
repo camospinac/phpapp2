@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Subscription;
-use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Withdrawal;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\SubscriptionsExport;
@@ -18,6 +18,10 @@ class ReportController extends Controller
     public function subscriptions(Request $request)
     {
         $subscriptions = Subscription::with(['user', 'plan'])
+            ->when($request->input('identification'), function ($query, $id) {
+                // Buscamos en la relación 'user'
+                $query->whereHas('user', fn($q) => $q->where('identification_number', 'like', "%{$id}%"));
+            })
             ->when($request->input('start_date'), function ($query, $startDate) {
                 $query->whereDate('created_at', '>=', $startDate);
             })
@@ -28,17 +32,22 @@ class ReportController extends Controller
                 $query->where('status', $status);
             })
             ->latest()
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString(); // 
 
         return Inertia::render('Admin/Reports/Subscriptions', [
             'subscriptions' => $subscriptions,
-            'filters' => $request->only(['start_date', 'end_date', 'status']),
+            'filters' => $request->only(['start_date', 'end_date', 'status', 'identification']),
         ]);
     }
 
     public function payments(Request $request)
     {
         $payments = Payment::with(['subscription.user', 'subscription.plan'])
+            ->when($request->input('identification'), function ($query, $id) {
+                // Relación anidada: Payment -> Subscription -> User
+                $query->whereHas('subscription.user', fn($q) => $q->where('identification_number', 'like', "%{$id}%"));
+            })
             ->when($request->input('start_date'), function ($query, $startDate) {
                 $query->whereDate('payment_due_date', '>=', $startDate);
             })
@@ -49,19 +58,22 @@ class ReportController extends Controller
                 $query->where('status', $status);
             })
             ->latest('payment_due_date')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         return Inertia::render('Admin/Reports/Payments', [
             'payments' => $payments,
-            'filters' => $request->only(['start_date', 'end_date', 'status']),
+            'filters' => $request->only(['start_date', 'end_date', 'status', 'identification']),
         ]);
     }
 
     public function withdrawals(Request $request)
     {
         $withdrawals = Withdrawal::with('user')
+            ->when($request->input('identification'), function ($query, $id) {
+                $query->whereHas('user', fn($q) => $q->where('identification_number', 'like', "%{$id}%"));
+            })
             ->when($request->input('start_date'), function ($query, $startDate) {
-                // Filtramos por 'updated_at' porque nos interesa saber cuándo se completó
                 $query->whereDate('updated_at', '>=', $startDate);
             })
             ->when($request->input('end_date'), function ($query, $endDate) {
@@ -71,28 +83,26 @@ class ReportController extends Controller
                 $query->where('status', 'like', "%{$status}%");
             })
             ->latest()
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         return Inertia::render('Admin/Reports/Withdrawals', [
             'withdrawals' => $withdrawals,
-            'filters' => $request->only(['start_date', 'end_date', 'status']),
+            'filters' => $request->only(['start_date', 'end_date', 'status', 'identification']),
         ]);
     }
 
-    public function exportSubscriptions(Request $request)
-    {
-        $filters = $request->only(['start_date', 'end_date', 'status']);
-
-        return Excel::download(new SubscriptionsExport($filters), 'suscripciones.xlsx');
+    // Los métodos de Export ya usan $request->all() o los filtros pasados, 
+    // así que recibirán el 'identification' automáticamente.
+    public function exportSubscriptions(Request $request) {
+        return Excel::download(new SubscriptionsExport($request->all()), 'suscripciones.xlsx');
     }
 
-    public function exportPayments(Request $request)
-    {
+    public function exportPayments(Request $request) {
         return Excel::download(new PaymentsExport($request->all()), 'pagos.xlsx');
     }
 
-    public function exportWithdrawals(Request $request)
-    {
+    public function exportWithdrawals(Request $request) {
         return Excel::download(new WithdrawalsExport($request->all()), 'retiros.xlsx');
     }
 }

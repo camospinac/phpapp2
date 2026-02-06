@@ -67,6 +67,14 @@ const completeWithdrawal = (withdrawal: Withdrawal) => {
     }
 };
 
+const rejectWithdrawal = (withdrawal: Withdrawal) => {
+    if (confirm(`¿Estás seguro de RECHAZAR el retiro de ${formatCurrency(withdrawal.amount)}? El dinero será devuelto automáticamente al usuario.`)) {
+        router.patch(route('admin.withdrawals.reject', { withdrawal: withdrawal.id }), {}, {
+            preserveScroll: true,
+        });
+    }
+};
+
 // --- HELPERS ---
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-CO', {
@@ -82,6 +90,7 @@ const formatDate = (dateString: string) => {
 </script>
 
 <template>
+
     <Head title="Gestionar Retiros" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
@@ -89,18 +98,15 @@ const formatDate = (dateString: string) => {
             <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
                 <h3 class="text-xl font-semibold">Solicitudes de Retiro Pendientes</h3>
                 <div class="w-full md:w-1/3">
-                    <Input 
-                        v-model="search"
-                        type="search" 
-                        placeholder="Buscar por código de 6 dígitos..." 
-                    />
+                    <Input v-model="search" type="search" placeholder="Buscar por código de 6 dígitos..." />
                 </div>
             </div>
-            
-            <div v-if="withdrawals.data.length === 0" class="flex items-center justify-center h-[40vh] text-muted-foreground">
+
+            <div v-if="withdrawals.data.length === 0"
+                class="flex items-center justify-center h-[40vh] text-muted-foreground">
                 <p class="text-center">No se encontraron solicitudes de retiro pendientes.</p>
             </div>
-            
+
             <div v-else class="overflow-x-auto">
                 <table class="min-w-full text-sm text-left">
                     <thead class="border-b">
@@ -125,27 +131,30 @@ const formatDate = (dateString: string) => {
                             <td class="px-4 py-3 font-mono text-right">{{ formatCurrency(w.amount) }}</td>
                             <td class="px-4 py-3 text-muted-foreground">{{ formatDate(w.created_at) }}</td>
                             <td class="px-4 py-3 text-center">
-                                <Button @click="completeWithdrawal(w)" size="sm" variant="secondary">
-                                    Marcar como Pagado
-                                </Button>
+                                <div class="flex items-center justify-center gap-2">
+                                    <Button @click="completeWithdrawal(w)" size="sm" variant="secondary"
+                                        class="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200">
+                                        Pagado
+                                    </Button>
+
+                                    <Button @click="rejectWithdrawal(w)" size="sm" variant="destructive">
+                                        Rechazar
+                                    </Button>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                
+
                 <div v-if="withdrawals.links.length > 3" class="flex justify-center mt-4">
                     <nav class="flex space-x-1">
-                        <a v-for="(link, index) in withdrawals.links" 
-                           :key="index"
-                           :href="link.url ?? undefined" @click.prevent="link.url && router.visit(link.url, { preserveState: true })"
-                           class="px-3 py-1 text-sm rounded-md"
-                           :class="{
+                        <a v-for="(link, index) in withdrawals.links" :key="index" :href="link.url ?? undefined"
+                            @click.prevent="link.url && router.visit(link.url, { preserveState: true })"
+                            class="px-3 py-1 text-sm rounded-md" :class="{
                                 'bg-primary text-primary-foreground': link.active,
                                 'hover:bg-muted': link.url,
                                 'text-muted-foreground cursor-not-allowed': !link.url
-                           }"
-                           v-html="link.label"
-                        />
+                            }" v-html="link.label" />
                     </nav>
                 </div>
             </div>

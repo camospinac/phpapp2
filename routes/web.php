@@ -100,6 +100,12 @@ Route::middleware(['auth', 'is.admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/subscriptions/pending', [AdminSubscriptionController::class, 'pending'])
         ->name('subscriptions.pending');
 
+    Route::patch('/subscriptions/{subscription}/reject', [AdminSubscriptionController::class, 'reject'])
+        ->name('subscriptions.reject');
+
+    Route::patch('/withdrawals/{withdrawal}/reject', [AdminWithdrawalController::class, 'reject'])
+        ->name('withdrawals.reject');
+
     // Ruta para aprobar una suscripción
     Route::patch('/subscriptions/{subscription}/approve', [AdminSubscriptionController::class, 'approve'])
         ->name('subscriptions.approve');
@@ -142,7 +148,6 @@ Route::middleware(['auth', 'is.admin'])->prefix('admin')->name('admin.')->group(
     Route::resource('winners', AdminWinnerController::class);
 
     Route::resource('ranks', App\Http\Controllers\Admin\RankController::class)->except(['show']);
-
 });
 
 require __DIR__ . '/settings.php';

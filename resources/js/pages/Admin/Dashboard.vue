@@ -21,7 +21,7 @@ const notificationSound = new Audio('/sounds/notification.mp3');
 onMounted(() => {
     window.Echo.private('admin-notifications')
         .listen('NewWithdrawalRequest', (e: { userName: string, amount: string }) => {
-            
+
             console.log('¡Nueva notificación!', e);
 
             // 3. Mostramos el Toast (¡Así de fácil!)
@@ -43,7 +43,7 @@ onMounted(() => {
         });
 
 
-        
+
 });
 
 
@@ -51,7 +51,8 @@ onMounted(() => {
 interface Stats {
     realUsers: number;         // 👈 Cambiado
     testUsers: number;
-    activeSubscriptions: number;
+    activeRealSubscriptions: number; // 👈 Añadir
+    activeTestSubscriptions: number;
     pendingSubscriptions: number;
     pendingWithdrawalsValue: number;
 }
@@ -84,33 +85,44 @@ const formatCurrency = (amount: number) => {
 </script>
 
 <template>
+
     <Head title="Admin Dashboard" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-<div class="flex flex-col gap-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            
-            <div class="p-6 rounded-xl border bg-card text-card-foreground shadow-sm">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-medium text-muted-foreground">Usuarios Reales</h3>
-                    <Users class="h-5 w-5 text-green-600" />
-                </div>
-                <p class="mt-2 text-3xl font-bold">{{ stats.realUsers }}</p>
-            </div>
+        <div class="flex flex-col gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
 
-            <div class="p-6 rounded-xl border bg-card text-card-foreground shadow-sm border-dashed">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-medium text-muted-foreground">Usuarios Prueba</h3>
-                    <Users class="h-5 w-5 text-orange-400" />
-                </div>
-                <p class="mt-2 text-3xl font-bold text-muted-foreground">{{ stats.testUsers }}</p>
-            </div>
-                <div class="p-6 rounded-xl border bg-card text-card-foreground">
+                <div class="p-6 rounded-xl border bg-card text-card-foreground shadow-sm">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-sm font-medium text-muted-foreground">Planes Activos</h3>
+                        <h3 class="text-sm font-medium text-muted-foreground">Usuarios Reales</h3>
+                        <Users class="h-5 w-5 text-green-600" />
+                    </div>
+                    <p class="mt-2 text-3xl font-bold">{{ stats.realUsers }}</p>
+                </div>
+
+                 <div class="p-6 rounded-xl border bg-card text-card-foreground shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-medium text-muted-foreground">Planes Activos (Reales)</h3>
                         <CheckCircle class="h-5 w-5 text-green-500" />
                     </div>
-                    <p class="mt-2 text-3xl font-bold">{{ stats.activeSubscriptions }}</p>
+                    <p class="mt-2 text-3xl font-bold">{{ stats.activeRealSubscriptions }}</p>
+                </div>
+
+                <div class="p-6 rounded-xl border bg-card text-card-foreground shadow-sm border-dashed">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-medium text-muted-foreground">Usuarios Prueba</h3>
+                        <Users class="h-5 w-5 text-orange-400" />
+                    </div>
+                    <p class="mt-2 text-3xl font-bold text-muted-foreground">{{ stats.testUsers }}</p>
+                </div>
+               
+
+                <div class="p-6 rounded-xl border bg-card text-card-foreground shadow-sm border-dashed">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-medium text-muted-foreground">Planes Activos (Prueba)</h3>
+                        <CheckCircle class="h-5 w-5 text-orange-400 opacity-70" />
+                    </div>
+                    <p class="mt-2 text-3xl font-bold text-muted-foreground">{{ stats.activeTestSubscriptions }}</p>
                 </div>
                 <div class="p-6 rounded-xl border bg-card text-card-foreground">
                     <div class="flex items-center justify-between">
@@ -147,7 +159,8 @@ const formatCurrency = (amount: number) => {
                         <tbody>
                             <tr v-for="(item, index) in recentActivity" :key="index" class="border-b">
                                 <td class="px-4 py-3">
-                                    <span class="font-semibold" :class="{'text-blue-500': item.type === 'Suscripción', 'text-orange-500': item.type === 'Retiro'}">
+                                    <span class="font-semibold"
+                                        :class="{ 'text-blue-500': item.type === 'Suscripción', 'text-orange-500': item.type === 'Retiro' }">
                                         {{ item.type }}
                                     </span>
                                 </td>

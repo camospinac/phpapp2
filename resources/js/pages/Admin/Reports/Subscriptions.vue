@@ -42,6 +42,7 @@ const props = defineProps<{
         start_date: string;
         end_date: string;
         status: string;
+        identification: string;
     };
 }>();
 
@@ -57,6 +58,7 @@ const filters = ref({
     start_date: props.filters.start_date ?? '',
     end_date: props.filters.end_date ?? '',
     status: props.filters.status ?? '',
+    identification: props.filters.identification ?? '',
 });
 
 const applyFilters = () => {
@@ -89,6 +91,10 @@ const formatDate = (dateString: string) => {
             <h3 class="text-xl font-semibold mb-4">Reporte Detallado de Suscripciones</h3>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 p-4 border rounded-lg items-end">
+                <div>
+                    <Label for="identification">Cédula / ID</Label>
+                    <Input id="identification" type="text" v-model="filters.identification" placeholder="Ej: 1070..." />
+                </div>
                 <div>
                     <Label for="start_date">Fecha Inicio</Label>
                     <Input id="start_date" type="date" v-model="filters.start_date" />
@@ -152,7 +158,8 @@ const formatDate = (dateString: string) => {
                             <td class="px-4 py-3 text-muted-foreground">{{ sub.plan.name }}</td>
                             <td class="px-4 py-3 capitalize">{{ sub.contract_type }}</td>
                             <td class="px-4 py-3 font-mono text-right">{{ formatCurrency(sub.initial_investment) }}</td>
-                            <td class="px-4 py-3 font-mono text-right text-green-600">+{{ formatCurrency(sub.profit_amount) }}</td>
+                            <td class="px-4 py-3 font-mono text-right text-green-600">+{{
+                                formatCurrency(sub.profit_amount) }}</td>
                             <td class="px-4 py-3 text-center">
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full" :class="{
                                     'bg-yellow-100 text-yellow-800': sub.status === 'pending_verification',

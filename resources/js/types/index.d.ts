@@ -51,6 +51,7 @@ export interface User {
     location: string;
     rank: Rank | null;
     referral_count: number;
+    es_cuenta_prueba: boolean;
     next_rank: {
         name: string;
         required_referrals: number;

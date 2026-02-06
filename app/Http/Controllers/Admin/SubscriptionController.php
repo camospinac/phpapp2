@@ -42,4 +42,11 @@ class SubscriptionController extends Controller
         return redirect()->route('admin.subscriptions.pending')
             ->with('success', '¡Suscripción aprobada con éxito!');
     }
+    public function reject(Subscription $subscription)
+    {
+        // Cambiamos el estado a 'rejected' (o como lo manejes en tu BD)
+        $subscription->update(['status' => 'rejected']);
+
+        return back()->with('success', 'Suscripción rechazada correctamente.');
+    }
 }

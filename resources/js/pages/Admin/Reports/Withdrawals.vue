@@ -37,6 +37,7 @@ const props = defineProps<{
         start_date: string;
         end_date: string;
         status: string;
+        identification: string;
     };
 }>();
 
@@ -52,6 +53,7 @@ const filters = ref({
     start_date: props.filters.start_date ?? '',
     end_date: props.filters.end_date ?? '',
     status: props.filters.status ?? '',
+    identification: props.filters.identification ?? '',
 });
 
 const applyFilters = () => {
@@ -82,6 +84,10 @@ const formatDate = (dateString: string) => {
             <h3 class="text-xl font-semibold mb-4">Reporte Detallado de Retiros</h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 p-4 border rounded-lg items-end">
+                   <div>
+                    <Label for="identification">Cédula / ID</Label>
+                    <Input id="identification" type="text" v-model="filters.identification" placeholder="Ej: 1070..." />
+                </div>
                 <div>
                     <Label for="start_date">Pagado Desde</Label>
                     <Input id="start_date" type="date" v-model="filters.start_date" />
