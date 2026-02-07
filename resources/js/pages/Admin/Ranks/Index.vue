@@ -62,7 +62,7 @@ const deleteRank = (rank: Rank) => {
                         <tr v-for="rank in ranks" :key="rank.id" class="border-b">
                             <td class="p-3 font-medium">{{ rank.name }}</td>
                             <td class="p-3 text-muted-foreground">{{ rank.required_referrals }}</td>
-                            <td class="p-3">{{ rank.reward_percentage }}%</td>
+                            <td class="p-3">{{ rank.reward_amount }}</td>
                             <td class="p-3">
                                 <span :class="['px-2 py-1 rounded-full text-xs font-medium', rank.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800']">
                                     {{ rank.is_active ? 'Activo' : 'Inactivo' }}

@@ -16,7 +16,7 @@ class Rank extends Model
         'name',
         'required_referrals',
         'reward_description',
-        'reward_percentage',
+        'reward_amount',
         'is_active',
     ];
 
