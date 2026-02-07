@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use App\Models\User;
 use App\Observers\UserObserver;
 use Illuminate\Support\Facades\URL;
+use App\Models\Subscription;
+use App\Observers\SubscriptionObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,7 +24,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        User::observe(UserObserver::class);
+        // User::observe(UserObserver::class);
+        Subscription::observe(SubscriptionObserver::class);
         if (config('app.env') === 'production') {
             URL::forceScheme('https');
         }
