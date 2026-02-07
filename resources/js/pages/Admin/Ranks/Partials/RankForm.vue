@@ -24,7 +24,7 @@ const form = useForm({
     name: props.rank?.name ?? '',
     required_referrals: props.rank?.required_referrals ?? 0,
     reward_description: props.rank?.reward_description ?? '',
-    reward_percentage: props.rank?.reward_percentage ?? 10.00,
+    reward_amount: props.rank?.reward_amount ?? 0,
     is_active: props.rank?.is_active ?? true,
 });
 
@@ -32,7 +32,7 @@ const submit = () => {
     const url = props.rank
         ? route('admin.ranks.update', props.rank.id)
         : route('admin.ranks.store');
-    
+
     form.post(url);
 };
 </script>
@@ -42,53 +42,32 @@ const submit = () => {
 
         <div class="grid gap-2">
             <Label for="name">Nombre del Rango</Label>
-            <Input 
-                id="name" 
-                type="text" 
-                v-model="form.name" 
-                placeholder="Ej: Bronce" 
-            />
+            <Input id="name" type="text" v-model="form.name" placeholder="Ej: Bronce" />
             <InputError :message="form.errors.name" />
         </div>
 
         <div class="grid gap-2">
             <Label for="required_referrals">Referidos Requeridos</Label>
-            <Input 
-                id="required_referrals" 
-                type="number" 
-                v-model="form.required_referrals"
-            />
+            <Input id="required_referrals" type="number" v-model="form.required_referrals" />
             <InputError :message="form.errors.required_referrals" />
         </div>
-        
+
         <div class="grid gap-2">
-            <Label for="reward_percentage">Porcentaje de Recompensa (%)</Label>
-            <Input 
-                id="reward_percentage" 
-                type="number" 
-                step="0.01"
-                v-model="form.reward_percentage"
-            />
-            <InputError :message="form.errors.reward_percentage" />
+            <Label for="reward_amount">Monto de Recompensa (Valor Fijo)</Label>
+            <Input id="reward_amount" type="number" step="0.01" v-model="form.reward_amount" placeholder="Ej: 100000" />
+            <InputError :message="form.errors.reward_amount" />
         </div>
 
         <div class="grid gap-2">
             <Label for="reward_description">Descripción</Label>
-            <textarea
-                id="reward_description"
-                v-model="form.reward_description"
+            <textarea id="reward_description" v-model="form.reward_description"
                 placeholder="Ej: Bono del 10% sobre la inversión..."
-                class="w-full rounded-md border bg-transparent px-3 py-2 text-sm focus:outline-none"
-            ></textarea>
+                class="w-full rounded-md border bg-transparent px-3 py-2 text-sm focus:outline-none"></textarea>
             <InputError :message="form.errors.reward_description" />
         </div>
 
         <div class="flex items-center space-x-2">
-            <Checkbox 
-                id="is_active" 
-                :checked="form.is_active"
-                @update:checked="form.is_active = $event as boolean"
-            />
+            <Checkbox id="is_active" :checked="form.is_active" @update:checked="form.is_active = $event as boolean" />
             <Label for="is_active" class="font-normal">
                 Rango Activo
             </Label>

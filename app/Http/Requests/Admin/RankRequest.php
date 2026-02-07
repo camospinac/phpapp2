@@ -26,7 +26,7 @@ class RankRequest extends FormRequest
             ],
             'required_referrals' => ['required', 'integer', 'min:0'],
             'reward_description' => ['nullable', 'string', 'max:500'],
-            'reward_percentage' => ['required', 'numeric', 'min:0', 'max:100'],
+            'reward_amount' => 'required|numeric|min:0',
             'is_active' => ['required', 'boolean'],
         ];
     }

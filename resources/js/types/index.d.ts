@@ -36,7 +36,7 @@ export interface Rank {
     name: string;
     required_referrals: number;
     reward_description: string;
-    reward_percentage: number;
+    reward_amount: number;
     is_active: boolean;
 }
 
