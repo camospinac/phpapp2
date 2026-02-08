@@ -487,7 +487,7 @@ Nos comprometemos a generar valor sostenible para inversionistas, comunidades y 
             </div>
             <div class="p-5 pt-0">
               <h1 class="display-5 mb-3">
-                <small class="align-top" style="font-size: 22px; line-height: 45px;">Desde</small>5M<small
+                <small class="align-top" style="font-size: 22px; line-height: 45px;">Hasta</small>5M<small
                   class="align-bottom" style="font-size: 16px; line-height: 40px;">/ COP</small>
               </h1>
               <div class="d-flex justify-content-between mb-3"><span>Pagos Mensuales</span><i

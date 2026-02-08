@@ -14,15 +14,15 @@ class RealisticUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->command->info('Creating realistic test users...');
+        $this->command->info('Creando usuarios de prueba con la nueva lógica...');
 
         $plans = Plan::all();
         if ($plans->isEmpty()) {
-            $this->command->error('No plans found. Please run PlanSeeder first.');
+            $this->command->error('No se encontraron planes. Por favor, corre el PlanSeeder primero.');
             return;
         }
 
-        // 🔹 Lista realista de usuarios con datos específicos
+        // 🔹 Lista actualizada de usuarios
         $usersData = [
             [
                 'nombres' => 'Cristian Leonardo',
@@ -31,6 +31,7 @@ class RealisticUserSeeder extends Seeder
                 'identification_number' => '1070625672',
                 'email' => 'Cristianleonardoramirez13@gmail.com',
                 'celular' => '7147476681',
+                'location' => 'Colombia, Cundinamarca, Girardot',
                 'password_base' => 'Cristian1070625672',
             ],
             [
@@ -40,6 +41,7 @@ class RealisticUserSeeder extends Seeder
                 'identification_number' => '80548813',
                 'email' => 'sergiocardenas3225@gmail.com',
                 'celular' => '3107973703',
+                'location' => 'Colombia, Cundinamarca, Girardot',
                 'password_base' => 'Sergio80548813',
             ],
             [
@@ -49,6 +51,7 @@ class RealisticUserSeeder extends Seeder
                 'identification_number' => '35426560',
                 'email' => 'andrearubga1983@gmail.com',
                 'celular' => '3102116914',
+                'location' => 'Colombia, Cundinamarca, Girardot',
                 'password_base' => 'Andrea35426560',
             ],
             [
@@ -58,6 +61,7 @@ class RealisticUserSeeder extends Seeder
                 'identification_number' => '1110519752',
                 'email' => 'andreag408@hotmail.com',
                 'celular' => '3102872389',
+                'location' => 'Colombia, Cundinamarca, Girardot',
                 'password_base' => 'Andrea1110519752',
             ],
             [
@@ -67,6 +71,7 @@ class RealisticUserSeeder extends Seeder
                 'identification_number' => '80179115',
                 'email' => 'monstwer24@gmail.com',
                 'celular' => '3229484560',
+                'location' => 'Colombia, Cundinamarca, Girardot',
                 'password_base' => 'German80179115',
             ],
             [
@@ -76,16 +81,27 @@ class RealisticUserSeeder extends Seeder
                 'identification_number' => '11524015',
                 'email' => 'carlosalvarezbus@gmail.com',
                 'celular' => '3229484570',
+                'location' => 'Colombia, Cundinamarca, Girardot',
                 'password_base' => 'Carlos11524015',
+            ],
+            // 🚀 NUEVO USUARIO
+            [
+                'nombres' => 'Hansel',
+                'apellidos' => 'Rodríguez Hernández',
+                'identification_type' => 'CEDULA CIUDANIA',
+                'identification_number' => '1075654215',
+                'email' => 'hanselfbi@hotmail.com',
+                'celular' => '3012840212',
+                'location' => 'Colombia, Cundinamarca, Zipaquirá',
+                'password_base' => 'Hansel1075654215',
             ],
         ];
 
         foreach ($usersData as $userData) {
             User::withoutEvents(function () use ($userData, $plans) {
-                // --- 1. Crear usuario (solo si no existe por email)
                 $existing = User::where('email', $userData['email'])->first();
                 if ($existing) {
-                    $this->command->warn("User {$userData['email']} already exists, skipping...");
+                    $this->command->warn("El usuario {$userData['email']} ya existe, saltando...");
                     return;
                 }
 
@@ -96,25 +112,27 @@ class RealisticUserSeeder extends Seeder
                     'password' => Hash::make($userData['password_base']),
                     'rol' => 'usuario',
                     'es_cuenta_prueba' => true,
+                    'location' => $userData['location'],
                     'identification_type' => $userData['identification_type'],
                     'identification_number' => $userData['identification_number'],
                     'celular' => $userData['celular'],
                     'referral_code' => strtoupper(substr($userData['nombres'], 0, 4) . rand(1000, 9999)),
                 ]);
 
-                $this->command->info("✅ User {$user->nombres} created successfully.");
+                $this->command->info("✅ Usuario {$user->nombres} creado.");
 
-                // --- 2. Crear 3 suscripciones simuladas con fechas pasadas ---
-                $creationDate = Carbon::now()->subDays(45);
+                // --- 2. Crear 2 suscripciones con antigüedad de 30-32 días ---
+                $creationDate = Carbon::now()->subDays(rand(30, 32));
 
-                for ($i = 0; $i < 3; $i++) {
+                for ($i = 0; $i < 2; $i++) {
                     $plan = $plans->random();
-                    $contractType = ($i == 2) ? 'cerrada' : 'abierta';
+                    // Una abierta y una cerrada
+                    $contractType = ($i == 0) ? 'abierta' : 'cerrada';
 
                     $subscription = $user->subscriptions()->create([
                         'plan_id' => $plan->id,
                         'sequence_id' => $i + 1,
-                        'initial_investment' => rand(10, 20) * 100000,
+                        'initial_investment' => rand(10, 20) * 100000, // Entre 1.0M y 2.0M
                         'status' => 'active',
                         'contract_type' => $contractType,
                         'created_at' => $creationDate,
@@ -122,16 +140,11 @@ class RealisticUserSeeder extends Seeder
                     ]);
 
                     $this->createPaymentSchedule($subscription);
-
-                    $creationDate->addDays(10);
                 }
             });
         }
     }
 
-    /**
-     * Genera pagos simulados para cada suscripción
-     */
     protected function createPaymentSchedule(Subscription $subscription)
     {
         $plan = $subscription->plan;
@@ -145,7 +158,7 @@ class RealisticUserSeeder extends Seeder
             $profitPercentage = $plan->closed_profit_percentage ?? 50;
             $durationDays = $plan->closed_duration_days ?? 90;
             $baseProfit = $amount * ($profitPercentage / 100);
-            $totalProfit = $baseProfit * 3;
+            $totalProfit = $baseProfit; // Ajustado a la lógica de tu negocio
             $totalPayment = $amount + $totalProfit;
             $dueDate = $startDate->copy()->addDays($durationDays);
 

@@ -45,52 +45,5 @@ class InitialDataSeeder extends Seeder
             'password' => Hash::make('Admin2025$'), // Contraseña: password
             'rol' => 'asesor', // <-- NUEVO ROL
         ]);
-
-        // 2. Creamos un usuario de prueba
-        $normalUser = User::create([
-            'nombres' => 'Usuario',
-            'apellidos' => 'De Pruebas',
-            'celular' => '3109876543',
-            'email' => 'usuario@grupoeon.com',
-            'password' => Hash::make('password'), // Contraseña: password
-            'rol' => 'usuario',
-        ]);
-
-        // --- CREACIÓN DE TRANSACCIONES PARA EL USUARIO DE PRUEBA ---
-
-        Transaction::create([
-            'id_user' => $normalUser->id,
-            'tipo' => 'abono',
-            'monto' => 1500000.00,
-            'observacion' => 'Salario Quincena 1',
-        ]);
-
-        Transaction::create([
-            'id_user' => $normalUser->id,
-            'tipo' => 'retiro',
-            'monto' => 80000.00,
-            'observacion' => 'Compra supermercado',
-        ]);
-
-        Transaction::create([
-            'id_user' => $normalUser->id,
-            'tipo' => 'retiro',
-            'monto' => 50000.00,
-            'observacion' => 'Plan de datos celular',
-        ]);
-        
-        Transaction::create([
-            'id_user' => $normalUser->id,
-            'tipo' => 'abono',
-            'monto' => 250000.00,
-            'observacion' => 'Pago proyecto freelance',
-        ]);
-
-        Transaction::create([
-            'id_user' => $normalUser->id,
-            'tipo' => 'retiro',
-            'monto' => 120000.00,
-            'observacion' => 'Cena fin de semana',
-        ]);
     }
 }
