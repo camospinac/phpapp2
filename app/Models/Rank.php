@@ -26,6 +26,6 @@ class Rank extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'required_referrals' => 'integer',
-        'reward_percentage' => 'decimal:2',
+        'reward_amount' => 'decimal:2',
     ];
 }
