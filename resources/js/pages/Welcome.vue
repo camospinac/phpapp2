@@ -18,10 +18,10 @@ const investorCount = ref(props.totalInvestors + 100);
 
 // 3. Simulación de crecimiento (cada 7.5 minutos sube un poco)
 onMounted(() => {
-    setInterval(() => {
-        const increment = Math.floor(Math.random() * 5) + 1;
-        investorCount.value += increment;
-    }, 50000); 
+  setInterval(() => {
+    const increment = Math.floor(Math.random() * 5) + 1;
+    investorCount.value += increment;
+  }, 50000);
 });
 
 // Datos de los planes (reflejan tu tabla 'plans')
@@ -113,7 +113,7 @@ onMounted(() => {
     <title>EON - Grupo Empresarial</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/style.css" rel="stylesheet">
+      <link href="/css/style.css" rel="stylesheet">
 
   </Head>
 
@@ -173,7 +173,7 @@ onMounted(() => {
           <a href="#" class="nav-item nav-link">Proyectos</a>
         </div>
         <Link :href="route('login')" class="btn btn-primary py-2 px-4 ms-3">
-        Iniciar Sesión
+          Iniciar Sesión
         </Link>
       </div>
     </nav>
@@ -188,7 +188,7 @@ onMounted(() => {
               <!-- <h5 class="text-white text-uppercase mb-3 animated slideInDown">Creative & Innovative</h5> -->
               <h1 class="display-1 text-white mb-md-4 animated zoomIn">Cumple tus metas invirtiendo seguro</h1>
               <Link :href="route('login')" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft d-lg-none">
-              Iniciar Sesión
+                Iniciar Sesión
               </Link>
             </div>
           </div>
@@ -200,7 +200,7 @@ onMounted(() => {
               <!-- <h5 class="text-white text-uppercase mb-3 animated slideInDown">Creative & Innovative</h5> -->
               <h1 class="display-1 text-white mb-md-4 animated zoomIn">Cumple tus metas invirtiendo seguro</h1>
               <Link :href="route('login')" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft d-lg-none">
-              Iniciar Sesión
+                Iniciar Sesión
               </Link>
             </div>
           </div>
@@ -297,8 +297,10 @@ onMounted(() => {
             <div class="p-4 bg-light rounded shadow-sm">
               <h4 class="text-primary mb-3"><i class="fa fa-bullseye me-2"></i>Misión</h4>
               <p class="mb-0">
-                Extraer y transformar recursos de manera inteligente, eficiente y responsable, aplicando prácticas innovadoras que reduzcan la huella ambiental y contribuyan a la descarbonización.
-Nos comprometemos a generar valor sostenible para inversionistas, comunidades y el entorno, equilibrando crecimiento económico y bienestar social para un futuro más limpio y sostenible.
+                Extraer y transformar recursos de manera inteligente, eficiente y responsable, aplicando prácticas
+                innovadoras que reduzcan la huella ambiental y contribuyan a la descarbonización.
+                Nos comprometemos a generar valor sostenible para inversionistas, comunidades y el entorno, equilibrando
+                crecimiento económico y bienestar social para un futuro más limpio y sostenible.
               </p>
             </div>
           </div>
@@ -311,7 +313,10 @@ Nos comprometemos a generar valor sostenible para inversionistas, comunidades y 
             </div>
             <div class="ps-4">
               <h5 class="mb-2">Habla con un asesor</h5>
-              <h4 class="text-primary mb-0">+57 321 3705763</h4>
+              <a href="https://wa.me/573213705763?text=Somos%20Grupo%20EON%2C%20estamos%20ac%C3%A1%20para%20ayudarte%20a%20crecer%20tu%20dinero..."
+                target="_blank" class="text-decoration-none">
+                <h4 class="text-primary mb-0">+57 321 3705763</h4>
+              </a>
             </div>
           </div>
         </div>
@@ -355,7 +360,8 @@ Nos comprometemos a generar valor sostenible para inversionistas, comunidades y 
                 <i class="fa fa-award text-white"></i>
               </div>
               <h4>Inversionistas satisfechos</h4>
-              <p class="mb-0">Construimos relaciones basadas en confianza, resultados y transparencia, respaldadas por procesos responsables, innovación constante y una gestión ética del capital</p>
+              <p class="mb-0">Construimos relaciones basadas en confianza, resultados y transparencia, respaldadas por
+                procesos responsables, innovación constante y una gestión ética del capital</p>
             </div>
           </div>
         </div>
@@ -373,7 +379,8 @@ Nos comprometemos a generar valor sostenible para inversionistas, comunidades y 
                 <i class="fa fa-users-cog text-white"></i>
               </div>
               <h4>Equipo de profesionales</h4>
-              <p class="mb-0">Contamos con un equipo experto en finanzas, minería, energía y tecnología, que garantiza procesos eficientes, seguros y orientados a la sostenibilidad.</p>
+              <p class="mb-0">Contamos con un equipo experto en finanzas, minería, energía y tecnología, que garantiza
+                procesos eficientes, seguros y orientados a la sostenibilidad.</p>
             </div>
             <div class="col-12 wow zoomIn" data-wow-delay="0.8s">
               <div class="bg-primary rounded d-flex align-items-center justify-content-center mb-3"
@@ -554,7 +561,10 @@ Nos comprometemos a generar valor sostenible para inversionistas, comunidades y 
             </div>
             <div class="ps-4">
               <h5 class="mb-2">¿Tienes dudas? Escríbenos</h5>
-              <h4 class="text-primary mb-0">+57 321 3705763</h4>
+              <a href="https://wa.me/573213705763?text=Somos%20Grupo%20EON%2C%20estamos%20ac%C3%A1%20para%20ayudarte%20a%20crecer%20tu%20dinero..."
+                target="_blank" class="text-decoration-none">
+                <h4 class="text-primary mb-0">+57 321 3705763</h4>
+              </a>
             </div>
           </div>
         </div>
@@ -627,7 +637,7 @@ Nos comprometemos a generar valor sostenible para inversionistas, comunidades y 
             <form action="">
               <div class="input-group">
                 <Link :href="route('register')" as="button" class="btn btn-dark">
-                Registrate
+                  Registrate
                 </Link>
               </div>
             </form>
@@ -653,9 +663,12 @@ Nos comprometemos a generar valor sostenible para inversionistas, comunidades y 
               </div>
               <div class="d-flex mb-2">
                 <i class="bi bi-telephone text-primary me-2"></i>
-                <p class="mb-0" style="color: #444444;">+57 321 3705763</p>
+                <a href="https://wa.me/573213705763?text=Somos%20Grupo%20EON%2C%20estamos%20ac%C3%A1%20para%20ayudarte%20a%20crecer%20tu%20dinero..."
+                  target="_blank" class="text-decoration-none">
+                  <p class="mb-0" style="color: #444444;">+57 321 3705763</p>
+                </a>
               </div>
-             
+
             </div>
 
           </div>

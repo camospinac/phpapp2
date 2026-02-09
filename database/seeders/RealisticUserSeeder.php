@@ -32,6 +32,7 @@ class RealisticUserSeeder extends Seeder
                 'email' => 'Cristianleonardoramirez13@gmail.com',
                 'celular' => '7147476681',
                 'location' => 'Colombia, Cundinamarca, Girardot',
+                'payment_receipt_path' => 'receipts/fake_receipt.jpg',
                 'password_base' => 'Cristian1070625672',
             ],
             [
@@ -42,6 +43,7 @@ class RealisticUserSeeder extends Seeder
                 'email' => 'sergiocardenas3225@gmail.com',
                 'celular' => '3107973703',
                 'location' => 'Colombia, Cundinamarca, Girardot',
+                'payment_receipt_path' => 'receipts/fake_receipt.jpg',
                 'password_base' => 'Sergio80548813',
             ],
             [
@@ -52,6 +54,7 @@ class RealisticUserSeeder extends Seeder
                 'email' => 'andrearubga1983@gmail.com',
                 'celular' => '3102116914',
                 'location' => 'Colombia, Cundinamarca, Girardot',
+                'payment_receipt_path' => 'receipts/fake_receipt.jpg',
                 'password_base' => 'Andrea35426560',
             ],
             [
@@ -62,6 +65,7 @@ class RealisticUserSeeder extends Seeder
                 'email' => 'andreag408@hotmail.com',
                 'celular' => '3102872389',
                 'location' => 'Colombia, Cundinamarca, Girardot',
+                'payment_receipt_path' => 'receipts/fake_receipt.jpg',
                 'password_base' => 'Andrea1110519752',
             ],
             [
@@ -72,6 +76,7 @@ class RealisticUserSeeder extends Seeder
                 'email' => 'monstwer24@gmail.com',
                 'celular' => '3229484560',
                 'location' => 'Colombia, Cundinamarca, Girardot',
+                'payment_receipt_path' => 'receipts/fake_receipt.jpg',
                 'password_base' => 'German80179115',
             ],
             [
@@ -82,6 +87,7 @@ class RealisticUserSeeder extends Seeder
                 'email' => 'carlosalvarezbus@gmail.com',
                 'celular' => '3229484570',
                 'location' => 'Colombia, Cundinamarca, Girardot',
+                'payment_receipt_path' => 'receipts/fake_receipt.jpg',
                 'password_base' => 'Carlos11524015',
             ],
             // 🚀 NUEVO USUARIO
@@ -93,6 +99,7 @@ class RealisticUserSeeder extends Seeder
                 'email' => 'hanselfbi@hotmail.com',
                 'celular' => '3012840212',
                 'location' => 'Colombia, Cundinamarca, Zipaquirá',
+                'payment_receipt_path' => 'receipts/fake_receipt.jpg',
                 'password_base' => 'Hansel1075654215',
             ],
         ];
