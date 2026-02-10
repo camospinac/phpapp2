@@ -9,14 +9,49 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Arr;
 use Inertia\Inertia;
+use App\Exports\UsersExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
     // Muestra la lista de todos los usuarios
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        return Inertia::render('Admin/Users/Index', ['users' => $users]);
+        // 1. Iniciamos la consulta con las relaciones necesarias
+        $query = User::query()->with(['rank']);
+
+        // 2. Filtro de búsqueda global (Nombre, Email, Celular)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nombres', 'like', "%{$search}%")
+                    ->orWhere('apellidos', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('celular', 'like', "%{$search}%");
+            });
+        }
+
+        // 3. Filtro por Rol
+        $query->when($request->rol, function ($q, $rol) {
+            $q->where('rol', $rol);
+        });
+
+        // 4. Filtro por Ubicación (Location)
+        $query->when($request->location, function ($q, $loc) {
+            $q->where('location', 'like', "%{$loc}%");
+        });
+
+        // 5. Filtro para ocultar/mostrar cuentas de prueba
+        if ($request->has('show_tests') && $request->show_tests === 'false') {
+            $query->where('es_cuenta_prueba', false);
+        }
+
+        return Inertia::render('Admin/Users/Index', [
+            // Cambiamos get() por paginate()
+            // El 15 es el número de usuarios por página
+            'users' => $query->latest()->paginate(15)->withQueryString(),
+            'filters' => $request->only(['search', 'rol', 'location', 'show_tests']),
+        ]);
     }
 
     public function show(User $user)
@@ -125,5 +160,13 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index')
             ->with('success', '¡Acción de emergencia ejecutada! Todos los usuarios han sido bloqueados.');
+    }
+
+    public function export(Request $request)
+    {
+        $filters = $request->only(['search', 'rol', 'location']);
+        $fileName = 'Reporte_Usuarios_EON_' . now()->format('Y-m-d_H-i') . '.xlsx';
+
+        return Excel::download(new UsersExport($filters), $fileName);
     }
 }

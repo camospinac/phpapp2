@@ -61,6 +61,7 @@ Route::get('/dashboard/statement/download', [DashboardController::class, 'downlo
 // Grupo de rutas para el ADMIN
 // Protegido por 'auth' y por nuestro middleware 'is.admin'
 Route::middleware(['auth', 'is.admin'])->name('admin.')->prefix('admin')->group(function () {
+    Route::get('users/export', [UserController::class, 'export'])->name('users.export');
     Route::resource('users', UserController::class)->except(['edit', 'create']);
     Route::resource('transactions', TransactionController::class)->except(['show', 'edit', 'create']);
 });
@@ -96,6 +97,7 @@ Route::get('/account-blocked', function () {
 })->middleware(['auth'])->name('account.blocked');
 
 Route::middleware(['auth', 'is.admin'])->prefix('admin')->name('admin.')->group(function () {
+
     // Ruta para mostrar la lista de suscripciones pendientes
     Route::get('/subscriptions/pending', [AdminSubscriptionController::class, 'pending'])
         ->name('subscriptions.pending');
