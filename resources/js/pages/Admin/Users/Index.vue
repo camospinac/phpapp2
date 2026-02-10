@@ -4,6 +4,8 @@ import { type BreadcrumbItem, type User } from '@/types';
 import { Head, useForm, Link } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import { Button } from '@/components/ui/button';
+import { usePage } from '@inertiajs/vue3';
+
 import {
     Dialog,
     DialogContent,
@@ -20,6 +22,10 @@ import { ShieldAlert } from 'lucide-vue-next';
 const props = defineProps<{
     users: User[];
 }>();
+
+const page = usePage();
+// Asumiendo que tu objeto de usuario tiene un campo 'rol'
+const isAdmin = computed(() => page.props.auth.user?.rol === 'admin');
 
 const isModalOpen = ref(false);
 const isEditMode = ref(false);
@@ -127,11 +133,17 @@ const executeBlockAll = () => {
                     </p>
                 </div>
                 <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex items-center gap-4">
-                    <Button @click="isPanicModalOpen = true" variant="destructive" class="flex items-center gap-2">
+
+                    <Button v-if="isAdmin" @click="isPanicModalOpen = true" variant="destructive"
+                        class="flex items-center gap-2">
                         <ShieldAlert class="h-4 w-4" />
                         Bloqueo Masivo
                     </Button>
-                    <Button @click="openCreateModal">Añadir Usuario</Button>
+
+                    <Button v-if="isAdmin" @click="openCreateModal">
+                        Añadir Usuario
+                    </Button>
+
                 </div>
             </div>
             <div class="mt-8 flow-root">
@@ -173,7 +185,7 @@ const executeBlockAll = () => {
                                         </div>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">{{ user.email
-                                        }}</td>
+                                    }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">{{
                                         user.celular }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">{{

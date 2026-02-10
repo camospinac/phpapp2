@@ -40,6 +40,18 @@ export interface Rank {
     is_active: boolean;
 }
 
+interface Referral {
+    id: string;
+    nombres: string;
+    apellidos: string;
+    email: string;
+    created_at: string;
+    subscriptions: {
+        initial_investment: number;
+        plan: { name: string };
+    }[];
+}
+
 export interface User {
     id: string;
     nombres: string;
@@ -52,11 +64,12 @@ export interface User {
     rank: Rank | null;
     referral_count: number;
     es_cuenta_prueba: boolean;
+    referrals?: Referral[];
     next_rank: {
         name: string;
         required_referrals: number;
     } | null;
-    // No incluimos password por seguridad
+    
 }
 
 export interface Transaction {

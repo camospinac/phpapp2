@@ -36,6 +36,7 @@ class UserController extends Controller
         $abonos = $userWithData->transactions->where('tipo', 'abono')->sum('monto');
         $retiros = $userWithData->transactions->where('tipo', 'retiro')->sum('monto');
         $totalAvailable = $abonos - $retiros;
+        $user->load(['rank', 'subscriptions.plan', 'transactions', 'referrals.subscriptions.plan']);
 
         // 3. Enviamos todo a la nueva vista de Vue
         return Inertia::render('Admin/Users/Show', [

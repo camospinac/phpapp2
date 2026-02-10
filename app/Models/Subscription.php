@@ -19,13 +19,25 @@ class Subscription extends Model
         'profit_amount',
     ];
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
-    public function plan() {
+    public function plan()
+    {
         return $this->belongsTo(Plan::class);
     }
-    public function payments() {
+    public function payments()
+    {
         return $this->hasMany(Payment::class);
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($subscription) {
+            if (empty($subscription->status)) {
+                $subscription->status = 'pending_verification';
+            }
+        });
     }
 }

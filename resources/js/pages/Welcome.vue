@@ -307,15 +307,18 @@ onMounted(() => {
 
           <!-- CTA con contacto -->
           <div class="d-flex align-items-center mt-5 wow fadeIn" data-wow-delay="0.6s">
-            <div class="bg-primary d-flex align-items-center justify-content-center rounded"
-              style="width: 60px; height: 60px;">
-              <i class="fa fa-phone-alt text-white"></i>
-            </div>
+            <a href="https://wa.me/573213705763?text=Somos%20Grupo%20EON..." target="_blank"
+              class="text-decoration-none">
+              <div class="d-flex align-items-center justify-content-center rounded shadow-sm"
+                style="width: 60px; height: 60px; background-color: #25D366;">
+                <i class="fab fa-whatsapp text-white fa-2x"></i>
+              </div>
+            </a>
             <div class="ps-4">
               <h5 class="mb-2">Habla con un asesor</h5>
-              <a href="https://wa.me/573213705763?text=Somos%20Grupo%20EON%2C%20estamos%20ac%C3%A1%20para%20ayudarte%20a%20crecer%20tu%20dinero..."
-                target="_blank" class="text-decoration-none">
-                <h4 class="text-primary mb-0">+57 321 3705763</h4>
+              <a href="https://wa.me/573213705763?text=Somos%20Grupo%20EON..." target="_blank"
+                class="text-decoration-none">
+                <h4 style="color: #25D366;" class="mb-0">+57 321 3705763</h4>
               </a>
             </div>
           </div>
@@ -555,15 +558,18 @@ onMounted(() => {
             </div>
           </div>
           <div class="d-flex align-items-center mt-2 wow zoomIn" data-wow-delay="0.6s">
-            <div class="bg-primary d-flex align-items-center justify-content-center rounded"
-              style="width: 60px; height: 60px;">
-              <i class="fa fa-phone-alt text-white"></i>
-            </div>
+            <a href="https://wa.me/573213705763?text=Somos%20Grupo%20EON..." target="_blank"
+              class="text-decoration-none">
+              <div class="d-flex align-items-center justify-content-center rounded shadow-sm"
+                style="width: 60px; height: 60px; background-color: #25D366;">
+                <i class="fab fa-whatsapp text-white fa-2x"></i>
+              </div>
+            </a>
             <div class="ps-4">
               <h5 class="mb-2">¿Tienes dudas? Escríbenos</h5>
-              <a href="https://wa.me/573213705763?text=Somos%20Grupo%20EON%2C%20estamos%20ac%C3%A1%20para%20ayudarte%20a%20crecer%20tu%20dinero..."
-                target="_blank" class="text-decoration-none">
-                <h4 class="text-primary mb-0">+57 321 3705763</h4>
+              <a href="https://wa.me/573213705763?text=Somos%20Grupo%20EON..." target="_blank"
+                class="text-decoration-none">
+                <h4 style="color: #25D366;" class="mb-0">+57 321 3705763</h4>
               </a>
             </div>
           </div>

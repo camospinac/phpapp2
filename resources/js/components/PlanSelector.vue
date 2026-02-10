@@ -243,6 +243,43 @@ const decreaseAmount = () => {
 
     form.amount = String(currentValue);
 };
+
+// --- LÓGICA DE ARCHIVOS ---
+const handleFileSelect = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0];
+
+    if (!file) return;
+
+    // 1. Validar Tipo (Solo imágenes)
+    if (!file.type.startsWith('image/')) {
+        form.setError('receipt', 'El archivo debe ser una imagen (JPG, PNG, etc.).');
+        form.receipt = null;
+        target.value = ''; // Limpiar el input
+        return;
+    }
+
+    // 2. Validar Peso (Ejemplo: 5MB para ser más flexibles que los 2MB de antes)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+        form.setError('receipt', 'La imagen es muy pesada (máx 5MB). Por favor, usa una más pequeña o comprímela.');
+        form.receipt = null;
+        target.value = '';
+        return;
+    }
+
+    // Si pasa las validaciones, limpiamos errores previos y asignamos
+    form.clearErrors('receipt');
+    form.receipt = file;
+};
+
+// Opcional: Para mostrar una miniatura del recibo cargado
+const receiptPreview = computed(() => {
+    if (!form.receipt) return null;
+    return URL.createObjectURL(form.receipt);
+});
+
+
 </script>
 
 <template>
@@ -436,26 +473,32 @@ const decreaseAmount = () => {
                     selectedTransferMethod?.name }}:</p>
                 <p class="text-2xl font-mono font-bold my-2">{{ selectedTransferMethod?.phone }}</p>
             </div>
-
-            <!-- <div class="p-4 rounded-lg bg-muted text-center">
-                <p class="text-sm text-muted-foreground">Por favor, realiza la transferencia al siguiente número:</p>
-                <p class="text-2xl font-mono font-bold my-2">300 123 4567</p>
-                <p class="text-xs text-muted-foreground">(Nequi / Daviplata / Transfiya)</p>
-            </div> -->
-            <div v-if="form.payment_method === 'transfer'" class="grid gap-2">
+            <div v-if="form.payment_method === 'transfer'" class="grid gap-4">
                 <Label for="receipt">Adjunta tu comprobante de pago</Label>
-                <Input id="receipt" type="file"
-                    @input="form.receipt = ($event.target as HTMLInputElement).files?.[0] ?? null"
+
+                <Input id="receipt" type="file" @change="handleFileSelect"
                     class="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                     accept="image/*" required />
+
+                <div v-if="receiptPreview" class="mt-2 relative w-full h-40 rounded-lg border overflow-hidden bg-muted">
+                    <img :src="receiptPreview" class="w-full h-full object-contain" />
+                    <p class="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded">Vista
+                        previa</p>
+                </div>
+
                 <InputError :message="form.errors.receipt" />
             </div>
 
             <div class="flex items-center gap-4">
                 <Button type="button" variant="outline" @click="currentStep = 1" class="w-1/3">Atrás</Button>
                 <Button type="submit" class="w-2/3" :disabled="form.processing || !form.receipt">
-                    <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
-                    Confirmar y Generar
+                    <template v-if="form.processing">
+                        <LoaderCircle class="h-4 w-4 animate-spin mr-2" />
+                        Subiendo Comprobante...
+                    </template>
+                    <template v-else>
+                        Confirmar y Generar
+                    </template>
                 </Button>
             </div>
 

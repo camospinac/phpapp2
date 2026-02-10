@@ -39,16 +39,18 @@ const mainNavItems = computed<NavItem[]>(() => {
             { title: 'Reporte Suscripciones', href: route('admin.reports.subscriptions'), icon: FileText },
             { title: 'Reporte Pagos', href: route('admin.reports.payments'), icon: FileText },
             { title: 'Reporte Retiros', href: route('admin.reports.withdrawals'), icon: FileText },
+            { title: 'Gestionar Usuarios', href: route('admin.users.index'), icon: Users },
         ];
 
         // 3. Si es SÓLO admin, le añadimos los enlaces extra
         if (user.value.rol === 'admin') {
             staffMenu.push(
-                { title: 'Gestionar Usuarios', href: route('admin.users.index'), icon: Users },
+                // { title: 'Gestionar Usuarios', href: route('admin.users.index'), icon: Users },
                 { title: 'Flujo de Caja', href: route('admin.reports.dashboard'), icon: AreaChart },
                 { title: 'Métodos de Pago', href: route('admin.payment-methods.index'), icon: Wallet },
                 { title: 'Ganadores', href: route('admin.winners.index'), icon: ArrowLeftRight },
-                { title: 'Gestionar Rangos', href: route('admin.ranks.index'), icon: Shield }
+                { title: 'Gestionar Rangos', href: route('admin.ranks.index'), icon: Shield },
+                { title: 'Campañas', href: route('admin.campaigns.index'), icon: Settings },
                 // { title: 'Gestionar Rangos', href: route('admin.ranks.index'), icon: Shield }, // <-- Aquí irá tu CRUD
             );
         }

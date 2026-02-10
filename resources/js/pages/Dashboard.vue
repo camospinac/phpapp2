@@ -380,6 +380,7 @@ const shareBaseUrl = window.location.origin;
 // Crea el enlace de registro completo (ej: https://tudominio.com/register?ref=MI-CODIGO)
 
 const registrationLink = computed(() => {
+    if (!user || !user.referral_code) return '';
     return `${shareBaseUrl}/register?ref=${user.referral_code}`;
 });
 

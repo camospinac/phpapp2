@@ -102,7 +102,7 @@ class SubscriptionController extends Controller
 
         DB::transaction(function () use ($user, $plan, $request, &$newSubscription, $newSequenceId) {
             $receiptPath = null;
-            $status = '';
+            $status = 'pending_verification';
 
             // Lógica para el método de pago (esto está perfecto)
             if ($request->payment_method === 'balance') {
