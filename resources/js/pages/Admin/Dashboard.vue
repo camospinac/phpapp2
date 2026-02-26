@@ -2,10 +2,16 @@
 import { Head } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { AlertTriangle, CheckCircle, Users, Wallet } from 'lucide-vue-next';
+import { AlertTriangle, CheckCircle, Users, Wallet, Search, FilterX } from 'lucide-vue-next';
 import { onMounted, onUnmounted } from 'vue';
 import { useToast } from "vue-toastification"; // <-- 1. Importa el hook correcto
 import Echo from 'laravel-echo';
+import { router } from '@inertiajs/vue3';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ref, watch } from 'vue';
+import { Link } from '@inertiajs/vue3';
 
 declare global {
     interface Window {
@@ -67,9 +73,32 @@ interface Activity {
 
 // --- PROPS ---
 const props = defineProps<{
-    stats: Stats;
-    recentActivity: Activity[];
+    stats: any;
+    recentActivity: any;
+    filters: any; // Estos son los filtros que vienen de la URL (Laravel)
 }>();
+
+// 3. VARIABLE LOCAL (Le cambiamos el nombre a filterForm para evitar conflictos)
+const filterForm = ref({
+    date_from: props.filters?.date_from || '',
+    date_to: props.filters?.date_to || '',
+});
+
+// 4. FUNCIONES DE FILTRADO
+const applyFilters = () => {
+    console.log("Aplicando filtros:", filterForm.value); // Debug para ver si los datos están capturados
+    router.get(route('admin.dashboard'), filterForm.value, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true
+    });
+};
+
+const resetFilters = () => {
+    filterForm.value.date_from = '';
+    filterForm.value.date_to = '';
+    router.visit(route('admin.dashboard'));
+};
 
 // --- BREADCRUMBS ---
 const breadcrumbs: BreadcrumbItem[] = [
@@ -100,7 +129,7 @@ const formatCurrency = (amount: number) => {
                     <p class="mt-2 text-3xl font-bold">{{ stats.realUsers }}</p>
                 </div>
 
-                 <div class="p-6 rounded-xl border bg-card text-card-foreground shadow-sm">
+                <div class="p-6 rounded-xl border bg-card text-card-foreground shadow-sm">
                     <div class="flex items-center justify-between">
                         <h3 class="text-sm font-medium text-muted-foreground">Planes Activos (Reales)</h3>
                         <CheckCircle class="h-5 w-5 text-green-500" />
@@ -115,7 +144,7 @@ const formatCurrency = (amount: number) => {
                     </div>
                     <p class="mt-2 text-3xl font-bold text-muted-foreground">{{ stats.testUsers }}</p>
                 </div>
-               
+
 
                 <div class="p-6 rounded-xl border bg-card text-card-foreground shadow-sm border-dashed">
                     <div class="flex items-center justify-between">
@@ -142,9 +171,11 @@ const formatCurrency = (amount: number) => {
 
             <div class="p-4 md:p-6 rounded-xl border bg-card text-card-foreground">
                 <h3 class="text-xl font-semibold mb-4">Actividad Reciente</h3>
-                <div v-if="recentActivity.length === 0" class="text-center py-12 text-muted-foreground">
+               
+                <div v-if="recentActivity.total === 0" class="text-center py-12 text-muted-foreground">
                     <p>No hay actividad reciente para mostrar.</p>
                 </div>
+
                 <div v-else class="overflow-x-auto">
                     <table class="min-w-full text-sm text-left">
                         <thead class="border-b">
@@ -157,14 +188,21 @@ const formatCurrency = (amount: number) => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(item, index) in recentActivity" :key="index" class="border-b">
+                            <tr v-for="(item, index) in recentActivity.data" :key="index" class="border-b">
                                 <td class="px-4 py-3">
-                                    <span class="font-semibold"
-                                        :class="{ 'text-blue-500': item.type === 'Suscripción', 'text-orange-500': item.type === 'Retiro' }">
+                                    <span class="font-semibold" :class="{
+                                        'text-blue-500': item.type === 'Suscripción',
+                                        'text-orange-500': item.type === 'Retiro',
+                                        'text-green-600': item.type === 'Registro'
+                                    }">
                                         {{ item.type }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 text-muted-foreground">{{ item.user_name }}</td>
+                                <td class="px-4 py-3">
+
+                                    {{ item.user_name }}
+
+                                </td>
                                 <td class="px-4 py-3 font-mono text-right">{{ formatCurrency(item.amount) }}</td>
                                 <td class="px-4 py-3 text-center">
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full" :class="{
@@ -178,6 +216,16 @@ const formatCurrency = (amount: number) => {
                             </tr>
                         </tbody>
                     </table>
+
+                </div>
+                <div v-if="recentActivity.links.length > 3" class="mt-4 flex justify-center">
+                    <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm">
+                        <Link v-for="(link, k) in recentActivity.links" :key="k" :href="link.url ?? ''"
+                            v-html="link.label" class="px-4 py-2 text-sm border" :class="[
+                                link.active ? 'bg-primary text-white' : 'bg-white text-gray-700',
+                                !link.url ? 'opacity-50 pointer-events-none' : ''
+                            ]" />
+                    </nav>
                 </div>
             </div>
         </div>

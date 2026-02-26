@@ -8,67 +8,107 @@ use App\Models\User;
 use App\Models\Withdrawal;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request) // 👈 Añadimos Request para los filtros
     {
-        $realUsers = User::where('rol', 'usuario')
-            ->where('es_cuenta_prueba', false)
-            ->count();
+        $dateFrom = $request->date_from;
+        $dateTo = $request->date_to;
 
-        // Usuarios de Prueba (es_cuenta_prueba = 1)
-        $testUsers = User::where('rol', 'usuario')
-            ->where('es_cuenta_prueba', true)
-            ->count();
-$activeRealSubscriptions = Subscription::where('status', 'active')
-        ->whereHas('user', function($query) {
-            $query->where('es_cuenta_prueba', false);
-        })->count();
+        // Filtro común para las 3 consultas
+        $filter = function ($query) use ($dateFrom, $dateTo) {
+            if ($dateFrom) $query->whereDate('created_at', '>=', $dateFrom);
+            if ($dateTo)   $query->whereDate('created_at', '<=', $dateTo);
+        };
 
-    // Planes Activos - Usuarios de PRUEBA
-    $activeTestSubscriptions = Subscription::where('status', 'active')
-        ->whereHas('user', function($query) {
-            $query->where('es_cuenta_prueba', true);
-        })->count();
+        // Aplicamos el filtro a cada uno
+        $subs = Subscription::with('user')->where($filter)->latest()->get();
+        $withdraws = Withdrawal::with('user')->where($filter)->latest()->get();
+        $registrations = User::where('rol', 'usuario')->where($filter)->latest()->get();
 
-    $pendingSubscriptions = Subscription::where('status', 'pending_verification')->count();
-    $pendingWithdrawalsValue = Withdrawal::where('status', 'pending')->sum('amount');
-        $pendingSubscriptions = Subscription::where('status', 'pending_verification')->count();
-        $pendingWithdrawalsValue = Withdrawal::where('status', 'pending')->sum('amount');
+        // 2. ESTADÍSTICAS (Mantenemos tu lógica pero optimizada)
+        $stats = [
+            'realUsers' => User::where('rol', 'usuario')->where('es_cuenta_prueba', false)->count(),
+            'testUsers' => User::where('rol', 'usuario')->where('es_cuenta_prueba', true)->count(),
+            'activeRealSubscriptions' => Subscription::where('status', 'active')
+                ->whereHas('user', fn($q) => $q->where('es_cuenta_prueba', false))->count(),
+            'activeTestSubscriptions' => Subscription::where('status', 'active')
+                ->whereHas('user', fn($q) => $q->where('es_cuenta_prueba', true))->count(),
+            'pendingSubscriptions' => Subscription::where('status', 'pending_verification')->count(),
+            'pendingWithdrawalsValue' => Withdrawal::where('status', 'pending')->sum('amount'),
+        ];
 
-        // --- CÁLCULO PARA EL LOG DE ACTIVIDAD RECIENTE ---
-        // Obtenemos las últimas 5 suscripciones y los últimos 5 retiros
-        $recentSubscriptions = Subscription::with('user')->latest()->take(5)->get();
-        $recentWithdrawals = Withdrawal::with('user')->latest()->take(5)->get();
+        // 3. OBTENER ACTIVIDAD (Suscripciones, Retiros y Registros)
 
-        // Los unimos en una sola colección y los ordenamos por fecha de creación
-        $recentActivity = $recentSubscriptions->concat($recentWithdrawals)
+        // A. Suscripciones
+        $subs = Subscription::with('user')->latest()
+            ->when($dateFrom, fn($q) => $q->whereDate('created_at', '>=', $dateFrom))
+            ->when($dateTo, fn($q) => $q->whereDate('created_at', '<=', $dateTo))
+            ->get();
+
+        // B. Retiros
+        $withdraws = Withdrawal::with('user')->latest()
+            ->when($dateFrom, fn($q) => $q->whereDate('created_at', '>=', $dateFrom))
+            ->when($dateTo, fn($q) => $q->whereDate('created_at', '<=', $dateTo))
+            ->get();
+
+        // C. Registros Nuevos (Los que querías añadir)
+        $registrations = User::where('rol', 'usuario')->latest()
+            ->when($dateFrom, fn($q) => $q->whereDate('created_at', '>=', $dateFrom))
+            ->when($dateTo, fn($q) => $q->whereDate('created_at', '<=', $dateTo))
+            ->get();
+
+        // 4. UNIFICAR Y MAPEAR
+        $mergedActivity = collect()
+            ->concat($subs->map(fn($item) => [
+                'type' => 'Suscripción',
+                'user_id' => $item->user_id, // Para el link al perfil
+                'user_name' => ($item->user->nombres ?? 'Desconocido') . ' ' . ($item->user->apellidos ?? ''),
+                'amount' => $item->initial_investment,
+                'status' => $item->status,
+                'date' => $item->created_at->diffForHumans(),
+                'created_at' => $item->created_at,
+            ]))
+            ->concat($withdraws->map(fn($item) => [
+                'type' => 'Retiro',
+                'user_id' => $item->user_id,
+                'user_name' => ($item->user->nombres ?? 'Desconocido') . ' ' . ($item->user->apellidos ?? ''),
+                'amount' => $item->amount,
+                'status' => $item->status,
+                'date' => $item->created_at->diffForHumans(),
+                'created_at' => $item->created_at,
+            ]))
+            ->concat($registrations->map(fn($item) => [
+                'type' => 'Registro',
+                'user_id' => $item->id,
+                'user_name' => $item->nombres . ' ' . $item->apellidos, // 👈 Aquí NO uses $item->user->... porque $item ya es el usuario
+                'amount' => 0,
+                'status' => 'nuevo',
+                'date' => $item->created_at->diffForHumans(),
+                'created_at' => $item->created_at,
+            ]))
             ->sortByDesc('created_at')
-            ->take(10) // Tomamos los 10 más recientes de la mezcla
-            ->values() // Resetea los índices del array
-            ->map(function ($item) {
-                // Damos un formato unificado a cada item
-                return [
-                    'type' => $item instanceof Subscription ? 'Suscripción' : 'Retiro',
-                    'user_name' => $item->user->nombres ?? 'Usuario Desconocido',
-                    'amount' => $item instanceof Subscription ? $item->initial_investment : $item->amount,
-                    'status' => $item->status,
-                    'date' => $item->created_at->diffForHumans(),
-                ];
-            });
+            ->values();
+
+        // 5. PAGINACIÓN MANUAL (10 por página)
+        $perPage = 10;
+        $page = $request->input('page', 1);
+        $paginatedActivity = new LengthAwarePaginator(
+            $mergedActivity->forPage($page, $perPage),
+            $mergedActivity->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
 
         return Inertia::render('Admin/Dashboard', [
-            'stats' => [
-                'realUsers' => $realUsers, // Mandamos el nuevo dato
-                'testUsers' => $testUsers,
-                'activeRealSubscriptions' => $activeRealSubscriptions, // Nuevo
-            'activeTestSubscriptions' => $activeTestSubscriptions,
-                
-                'pendingSubscriptions' => $pendingSubscriptions,
-                'pendingWithdrawalsValue' => $pendingWithdrawalsValue,
-            ],
-            'recentActivity' => $recentActivity,
+            'stats' => $stats,
+            'recentActivity' => $paginatedActivity,
+            'filters' => $request->only(['date_from', 'date_to']),
         ]);
     }
 }

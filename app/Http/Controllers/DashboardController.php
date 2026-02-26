@@ -17,68 +17,50 @@ class DashboardController extends Controller
     public function show()
     {
         $paymentMethods = PaymentMethod::where('is_active', true)
-        ->get(['id', 'name', 'account_details', 'logo_path']);
+            ->get(['id', 'name', 'account_details', 'logo_path']);
 
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
         if ($user->is_fraud) {
-        return redirect()->route('account.blocked');
+            return redirect()->route('account.blocked');
         }
 
         if ($user->rol === 'admin') {
             return redirect()->route('admin.dashboard');
         }
 
-        // --- CÁLCULOS PRINCIPALES ---
+        // --- CÁLCULOS PRINCIPALES (Sincronizados con la DB) ---
 
-        // 1. Obtenemos TODAS las suscripciones activas (con su plan para los cálculos)
+        // 1. Obtenemos las suscripciones activas
         $activeSubscriptions = $user->subscriptions()
             ->with('plan')
             ->where('status', 'active')
             ->get();
-        $withdrawals = $user->withdrawals()->latest()->get();
 
-        // 2. Calculamos los TOTALES GLOBALES para las tarjetas
+        // 2. TOTALES PARA LAS TARJETAS: Leemos directamente de la base de datos
+        // Ya no hacemos foreach, confiamos en lo que guardó el Trait y el Comando
         $totalInversion = $activeSubscriptions->sum('initial_investment');
-        $totalUtilidad = 0;
-        
-        // --- INICIA LA LÓGICA CORREGIDA ---
-        // Iteramos sobre cada suscripción para calcular su utilidad específica
-        foreach ($activeSubscriptions as $sub) {
-            // Si el contrato es CERRADO, usamos el porcentaje para cerrados (40%)
-            if ($sub->contract_type === 'cerrada' && $sub->plan->closed_profit_percentage) {
-                $baseProfit = $sub->initial_investment * ($sub->plan->closed_profit_percentage / 100);
-                $totalUtilidad += $baseProfit * 3; // La fórmula que definimos
-            } 
-            // Si el contrato es ABIERTO, usamos el porcentaje para abiertos (15%)
-            elseif ($sub->contract_type === 'abierta' && $sub->plan->fixed_percentage) {
-                $baseProfit = $sub->initial_investment * ($sub->plan->fixed_percentage / 100);
-                $totalUtilidad += $baseProfit * 6;
-            }
-        }
-        // --- FIN DE LA LÓGICA CORREGIDA ---
+        $totalUtilidad  = $activeSubscriptions->sum('profit_amount'); // 👈 Aquí está la clave
+        $totalGanancia   = $totalInversion + $totalUtilidad;
 
-        $totalGanancia = $totalInversion + $totalUtilidad;
-        
-        // 3. Calculamos el saldo disponible desde la tabla de transacciones
+        // 3. Saldo Disponible (Transacciones)
+        $withdrawals = $user->withdrawals()->latest()->get();
         $abonos = $user->transactions()->where('tipo', 'abono')->sum('monto');
         $retiros = $user->transactions()->where('tipo', 'retiro')->sum('monto');
         $totalAvailable = $abonos - $retiros;
 
-        // 4. Preparamos los datos para enviar a la vista
         return Inertia::render('Dashboard', [
-            // Cargamos los pagos aquí al final para mantener la consulta inicial ligera
             'subscriptions' => $activeSubscriptions->load(['payments' => function ($query) {
                 $query->orderBy('payment_due_date', 'asc');
             }]),
             'plans' => Plan::all(),
             'transactions' => $user->transactions()->latest()->get(),
             'totalInversion' => $totalInversion,
-            'totalUtilidad' => $totalUtilidad,
-            'totalGanancia' => $totalGanancia,
+            'totalUtilidad'  => $totalUtilidad,
+            'totalGanancia'  => $totalGanancia,
             'totalAvailable' => $totalAvailable,
-            'withdrawals' => $withdrawals, 
+            'withdrawals'    => $withdrawals, 
             'paymentMethods' => $paymentMethods,
         ]);
     }
@@ -88,18 +70,21 @@ class DashboardController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // 1. Recopilamos toda la información del usuario
+        // Cargamos relaciones
         $user->load(['subscriptions.plan', 'transactions' => fn($q) => $q->latest()]);
 
-        // 2. Calculamos los totales
+        // Sincronizamos los stats del PDF con la misma lógica del Dashboard
+        $totalInversion = $user->subscriptions->where('status', 'active')->sum('initial_investment');
+        $totalProfit    = $user->subscriptions->where('status', 'active')->sum('profit_amount');
+
         $stats = [
-            'totalInversion' => $user->subscriptions->sum('initial_investment'),
-            'totalProfit' => $user->subscriptions->sum('profit_amount'),
-            'totalGanancia' => $user->subscriptions->sum('initial_investment') + $user->subscriptions->sum('profit_amount'),
-            'totalAvailable' => $user->transactions->where('tipo', 'abono')->sum('monto') - $user->transactions->where('tipo', 'retiro')->sum('monto'),
+            'totalInversion' => $totalInversion,
+            'totalProfit'    => $totalProfit,
+            'totalGanancia'  => $totalInversion + $totalProfit,
+            'totalAvailable' => $user->transactions->where('tipo', 'abono')->sum('monto') - 
+                                $user->transactions->where('tipo', 'retiro')->sum('monto'),
         ];
 
-        // 3. Generamos el PDF
         $pdf = PDF::loadView('pdf.statement', [
             'user' => $user,
             'stats' => $stats,
@@ -107,7 +92,6 @@ class DashboardController extends Controller
             'transactions' => $user->transactions,
         ]);
 
-        // 4. Lo enviamos al navegador para su descarga
         return $pdf->download('extracto-' . now()->format('Y-m-d') . '.pdf');
     }
 }
